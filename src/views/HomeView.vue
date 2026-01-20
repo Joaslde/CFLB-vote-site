@@ -1,0 +1,3 @@
+<template>
+    salut
+  </template>

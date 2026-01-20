@@ -1,0 +1,35 @@
+/* src/assets/main.css */
+
+/* Importation des Polices : Playfair Display (Titres) et Montserrat (Corps) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+    --color-gold: #D4AF37; /* Le doré officiel */
+    --color-gold-light: #F4C430;
+    --color-black-deep: #0a0a0a;
+    --color-ivory: #FFFFF0;
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-ivory);
+    color: var(--color-black-deep);
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: var(--font-title);
+    font-weight: 700;
+}
+
+/* Utilitaires de transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
