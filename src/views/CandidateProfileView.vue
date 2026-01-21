@@ -647,26 +647,26 @@ const handleKkiapaySuccess = async (response) => {
   /* pop up apres payement */
 
   .notification-container {
-    position: fixed;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    min-width: 350px;
-    background: rgba(20, 20, 20, 0.85);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-  }
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  min-width: 350px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
 
-  .notification-content {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    gap: 15px;
-    position: relative;
-  }
+.notification-content {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
+  position: relative;
+}
 
   .notification-close {
     background: none;
