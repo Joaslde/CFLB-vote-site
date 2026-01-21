@@ -28,5 +28,15 @@ export const candidateService = {
       throw error
     }
     return data
-  }
+  },
+  // Ajoute cette fonction à ton objet candidateService
+async incrementVotes(id, votes_count) {
+  const { data, error } = await supabase.rpc('increment_candidate_votes', {
+    candidate_id: id,
+    amount: votes_count
+  });
+
+  if (error) throw error;
+  return data;
+}
 }

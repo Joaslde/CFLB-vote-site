@@ -1,7 +1,7 @@
 <template>
     <div class="page-container">
       <header class="page-header container mt-5 mb-5 text-center text-md-start">
-        <h1 class="premium-title">Les Candidates</h1>
+         <h1 class="premium-title">Les Candidates</h1>
         <p class="premium-subtitle">Découvrez les visages de l'excellence et de l'élégance.</p>
       </header>
   
@@ -76,9 +76,13 @@
   <style scoped>
   .page-container {
     background-color:rgb(255, 255, 255);
-    
   }
-  
+
+  @media (min-width: 768px) {
+    header{
+      margin-left:150px;
+    }
+  }
   /* --- Layout Masonry Fixé --- */
   .masonry-grid {
     display: block;
@@ -90,9 +94,6 @@
   
   @media (min-width: 768px) {
     .masonry-grid { column-count: 3; column-gap: 20px; }
-  }
-  @media (min-width: 1200px) {
-    .masonry-grid { column-count: 4; }
   }
   
   .masonry-item {
@@ -185,6 +186,48 @@
     padding: 5px 15px;
     border-radius: 20px;
     font-size: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+
+    .candidate-id {
+      font-size:1.5rem;
+    }
+    
+    .avatar-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #D4AF37;
+    overflow: hidden;
+    margin-bottom:10px;
+    background: #eee;
+  }
+  
+  .avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .candidate-name {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .btn-profil {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border: none;
+    color: #fff;
+    padding: 7px 20px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+
+
   }
   
   .candidate-card:hover {
