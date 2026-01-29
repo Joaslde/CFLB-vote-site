@@ -389,6 +389,8 @@ const handleKkiapaySuccess = async (response) => {
       letter-spacing: 1px;
       box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
       transition: transform 0.3s ease;
+     
+    
     }
 
     .btn-vote:hover {
@@ -418,18 +420,19 @@ const handleKkiapaySuccess = async (response) => {
       }
 
       .candidate-hashtag {
-        font-size: 0.65rem;
+        font-size: .65rem;
       }
 
       .candidate-name {
-        font-size: 1.25rem;
+        font-size: 1.22rem;
         margin: 3px 0;
+
       }
 
       .candidate-category {
-          margin-top:18px;
+          margin-top:10px;
         font-size: 0.6rem;
-        margin-bottom:-.2rem;
+        margin-bottom:-.7rem;
 
       }
 
