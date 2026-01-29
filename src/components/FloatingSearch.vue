@@ -66,7 +66,7 @@ const handleSearch = () => {
   width: 55px;
   height: 55px;
   border-radius: 50%;
-  background-color: #D4AF37;
+  background-color: #eea810;
   border: none;
   color: #000;
   font-size: 1.4rem;

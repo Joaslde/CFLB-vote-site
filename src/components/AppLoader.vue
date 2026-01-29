@@ -29,7 +29,7 @@ onMounted(() => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #D4AF37; /* Le doré officiel */
+    background-color: #e6b515; /* Le doré officiel */
     z-index: 9999;
     display: flex;
     justify-content: center;

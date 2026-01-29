@@ -312,7 +312,7 @@ const handleKkiapaySuccess = async (response) => {
     }
     
     .candidate-hashtag {
-      color: #D4AF37;
+      color: #eea810;
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -379,7 +379,7 @@ const handleKkiapaySuccess = async (response) => {
     /* Bouton Vote */
     .btn-vote {
       width: 100%;
-      background: linear-gradient(135deg, #D4AF37, #FFD700);
+      background: linear-gradient(135deg, #cfaa2e, #eea810);
       border: none;
       color: #000;
       padding: 12px;
