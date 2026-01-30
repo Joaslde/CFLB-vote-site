@@ -91,7 +91,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <button class="btn-noble-outline" @click="router.push('/candidates')">
+          <button class="btn-event-link" @click="router.push('/candidates')">
             DÉCOUVRIR TOUTES LES CANDIDATES
           </button>
         </div>
@@ -502,11 +502,11 @@ onMounted(async () => {
 /* --- SECTION 7: FOOTER --- */
 .elegant-footer {
   background: #050505;
-  padding: 60px 20px;
+  padding: 10px 10px;
   color: rgba(255,255,255,0.6);
 }
-.footer-logo { width: 200px; opacity: 0.9; } /* LOGO 200PX */
-.footer-title { color: #D4AF37; font-size: 1.5rem; }
+.footer-logo { width: 200px;} /* LOGO 200PX */
+.footer-title { color: #D4AF37; font-size: 2rem; }
 .footer-divider { width: 50px; height: 1px; background: #333; margin: 30px auto; }
 .social-links { margin-bottom: 30px; font-size: 1.5rem; }
 .social-links a { color: rgba(255,255,255,0.4); margin: 0 15px; transition: 0.3s; }
@@ -521,6 +521,10 @@ onMounted(async () => {
   .preview-card { width: 100%; height: 350px; }
   .cta-title { font-size: 2.5rem; }
   .section-title{font-size: 2.5rem; margin:2rem;}
+  .footer-logo {  margin-bottom: -5rem ; } /* LOGO 200PX */
+  .footer-title { margin-top: -2rem; }
+
+
 }
 
 /* ANIMATIONS GENERALES */
