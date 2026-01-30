@@ -9,7 +9,7 @@
       
       <div class="hero-content fade-in-up">
         <h1 class="premium-title main-title">Célébrer le Leadership  <span class="text-gold" >Féminin </span></h1>
-        <p class="premium-subtitle">Conférence des Femmes Leaders – Vote Officiel</p>
+        <p class="premium-subtitle">Conférence des Femmes Leaders du Bénin – Vote Officiel</p>
         
         <div class="mt-4">
           <button class="btn-hero-quick" @click="router.push('/candidates')">
@@ -54,7 +54,7 @@
             <h2 class="font-premium text-red section-title mb-3">L'Événement</h2>
             <!-- <h3 class="font-main text-dark subtitle-event">Une nuit pour l'histoire.</h3> -->
             <p class="event-desc">
-              La Conférence des Femmes Leaders (CFLB) n'est pas une simple cérémonie, c'est l'apogée d'une année d'impact. C'est ici que les visions se rencontrent et que l'excellence est couronnée. Découvrez le programme, les enjeux et la vision derrière cette initiative prestigieuse.
+              La Conférence des Femmes Leaders du Bénin (CFLB) n'est pas une simple cérémonie, c'est l'apogée d'une année d'impact. C'est ici que les visions se rencontrent et que l'excellence est couronnée. Découvrez le programme, les enjeux et la vision derrière cette initiative prestigieuse.
             </p>
             
             <button class="btn-event-link mt-4" @click="router.push('/evenement')">
@@ -111,7 +111,7 @@
     <footer class="elegant-footer">
       <div class="container text-center">
         <img :src="logo" alt="Logo CFLB" class="footer-logo mb-4">
-        <h4 class="font-premium footer-title">Conférence des Femmes Leaders</h4>
+        <h4 class="font-premium footer-title">Conférence des Femmes Leaders du Bénin</h4>
         <div class="footer-divider"></div>
         <div class="social-links">
           <a href="#"><i class="bi bi-instagram"></i></a>
