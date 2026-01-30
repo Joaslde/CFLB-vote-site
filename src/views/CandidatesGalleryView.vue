@@ -46,6 +46,7 @@
       </div>
   
       <FloatingSearch :candidates="candidates" @highlight="handleHighlight" />
+      <Footer/>
     </div>
   </div>
 </template>
@@ -55,6 +56,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import FloatingSearch from '../components/FloatingSearch.vue';
+import Footer from '../components/Footer.vue';
   
 const router = useRouter();
 const candidates = ref([]);
@@ -168,9 +170,9 @@ const handleHighlight = (id) => {
 .candidate-id {
   position: absolute;
   bottom: 2px;
-  left: 12px;
+  left: 10px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.5rem;
   font-weight: 300;
   opacity:.5;
   color: #ffffff; /* Couleur dorée */

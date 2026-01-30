@@ -1,21 +1,529 @@
 <template>
-      <center><h1>salut</h1> </center> 
+  <div class="home-container">
+    
+    <section class="hero-section">
+      <video autoplay muted loop playsinline class="hero-video">
+        <source src="../assets/video2.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+      
+      <div class="hero-content fade-in-up">
+        <h1 class="premium-title main-title">Célébrer le Leadership  <span class="text-gold" >Féminin </span></h1>
+        <p class="premium-subtitle">Conférence des Femmes Leaders – Vote Officiel</p>
+        
+        <div class="mt-4">
+          <button class="btn-hero-quick" @click="router.push('/candidates')">
+            VOTER MAINTENANT
+          </button>
+        </div>
+      </div>
+      
+      <div class="scroll-indicator">
+        <div class="mouse"></div>
+      </div>
+    </section>
 
-    <button class="back-button" @click="goBack">
-      <i class="bi bi-chevron-left"></i>
-    </button>
-  </template>
+    <section class="manifesto-section scroll-trigger">
+      <div class="container text-center">
+        <p class="manifesto-text font-premium text-red">L'excellence n'est pas un acte,</p>
+        <p class="manifesto-text font-main text-dark">C'est une habitude cultivée dans l'ombre,</p>
+        <p class="manifesto-text font-main text-gold small-text">Révélée aujourd'hui à la lumière.</p>
+      </div>
+    </section>
 
-  <script setup>
-    import { useRoute, useRouter } from 'vue-router';
-    const router = useRouter();
+    <section class="signature-section scroll-trigger">
+      <div class="signature-bg"></div>
+      <div class="signature-content container">
+        <div class="keyword-container">
+          <span class="keyword k-1">VISION</span>
+          <span class="keyword k-2">IMPACT</span>
+          <span class="keyword k-3">PRESTANCE</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="event-section scroll-trigger">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+             <div class="event-image-wrapper">
+                <img src="https://i.pinimg.com/736x/74/d1/3b/74d13bc40b688bd8e0dd0f9a1d66aff1.jpg" alt="Event" class="img-fluid rounded-shadow">
+             </div>
+          </div>
+          <div class="col-lg-6 text-center text-lg-start ps-lg-5">
+            <h2 class="font-premium text-red section-title mb-3">L'Événement</h2>
+            <!-- <h3 class="font-main text-dark subtitle-event">Une nuit pour l'histoire.</h3> -->
+            <p class="event-desc">
+              La Conférence des Femmes Leaders (CFLB) n'est pas une simple cérémonie, c'est l'apogée d'une année d'impact. C'est ici que les visions se rencontrent et que l'excellence est couronnée. Découvrez le programme, les enjeux et la vision derrière cette initiative prestigieuse.
+            </p>
+            
+            <button class="btn-event-link mt-4" @click="router.push('/evenement')">
+              EN SAVOIR PLUS
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="preview-section scroll-trigger">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="font-premium text-red section-title ">Les Favorites</h2>
+          <p class="text-muted">Le classement actuel en temps réel</p>
+        </div>
+        
+        <div class="preview-grid">
+          <div 
+            v-for="(candidate, index) in topCandidates" 
+            :key="candidate.id"
+            class="preview-card" 
+            @click="router.push('/candidates')"
+          >
+            <div class="rank-badge">#{{ index + 1 }}</div>
+            
+            <img :src="candidate.photo" :alt="candidate.nom">
+            
+            <div class="preview-info">
+              <h4>{{ candidate.nom }}</h4>
+              <span class="vote-pill">{{ candidate.votes_count }} Votes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <button class="btn-noble-outline" @click="router.push('/candidates')">
+            DÉCOUVRIR TOUTES LES CANDIDATES
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-noble-section scroll-trigger">
+      <div class="content-wrapper">
+        <h2 class="font-premium text-red cta-title">Faites partie de l'histoire</h2>
+        <p class="cta-subtitle text-dark">Votre soutien définit l'excellence de demain.</p>
+        <button class="btn-noble-gold" @click="router.push('/candidates')">
+          ACCÉDER AU VOTE
+        </button>
+      </div>
+    </section>
+
+    <footer class="elegant-footer">
+      <div class="container text-center">
+        <img :src="logo" alt="Logo CFLB" class="footer-logo mb-4">
+        <h4 class="font-premium footer-title">Conférence des Femmes Leaders</h4>
+        <div class="footer-divider"></div>
+        <div class="social-links">
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+        </div>
+        <p class="copyright">© 2026 CFLB. Tous droits réservés. L'élégance est une attitude.</p>
+      </div>
+    </footer>
+
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { candidateService } from '../services/candidateService';
+import logo from '../assets/CFLB-logo-bgless.png'; 
+
+const router = useRouter();
+const topCandidates = ref([]);
+
+// Récupération des candidates réelles
+onMounted(async () => {
+  try {
+    const allCandidates = await candidateService.getAllCandidates();
+    // Tri par votes (décroissant) et on garde les 3 premiers
+    topCandidates.value = allCandidates
+      .sort((a, b) => (b.votes_count || 0) - (a.votes_count || 0))
+      .slice(0, 3);
+  } catch (error) {
+    console.error("Erreur chargement top 3:", error);
+  }
+
+  // Animation scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.scroll-trigger').forEach((el) => {
+    observer.observe(el);
+  }
+);
+});
+</script>
+
+<style scoped>
+/* IMPORT FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rouge+Script&display=swap');
+
+/* --- VARIABLES GLOBALES --- */
+:root {
+  --gold: #D4AF37;
+  --red: #e60417;
+  --dark: #111;
+  --ivory: #f8f9fa; /* Blanc cassé très léger pour les fonds alternatifs */
+  --white: #ffffff;
+}
+
+.home-container {
+  overflow-x: hidden;
+  background-color: #ffffff;
+}
+
+/* TYPOGRAPHIE */
+.font-premium { font-family: 'Lobster', cursive;  }
+.font-main { font-family: 'Montserrat', sans-serif; }
+.text-gold { color: #d6ad28; }
+.text-red { color: red; }
+.text-dark { color: #222; }
+.premium-title {font-family: 'Lobster', cursive; font-size: 10rem; }
+
+/* --- SECTION 1: HERO --- */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+}
+
+.hero-video {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  /* On garde un léger filtre pour que le texte blanc soit lisible */
+  filter: brightness(0.8); 
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  /* Dégradé subtil pour aider la lecture */
+  background: radial-gradient(circle, rgba(235, 166, 19, 0.1) 0%, rgba(216, 145, 12, 0.4) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  padding: 20px;
+}
+
+.main-title {
+  font-family: 'Lobster', cursive; /* On force la police ici */
+  font-size: 8rem;
+  font-weight:10rem;
+  margin-bottom: 10px;
+  color: #ffffff; /* Ton rouge demandé */
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+  animation: fadeUp 2s ease-out;
+  line-height: 1.2; /* Pour éviter que les lettres se chevauchent si c'est sur 2 lignes */
+  width: 100%; /* S'assure qu'il prend la largeur du parent */
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    padding: 1px; /* On réduit le padding pour laisser plus de place au texte */
+    width: 95%;    /* On occupe presque tout l'écran */
+    
+  }
+
+  .main-title {
+    /* 10vw signifie 10% de la largeur de l'écran. 
+       C'est dynamique : ça grossit sur grand mobile et réduit sur petit. */
+    font-size: 2.5rem; 
+    font-weight:9px;
+    line-height: 1.3;
+    margin-bottom: 25px;
+    display: block;
+    width: 100%;
+  }
+
+ 
+  
+}
 
 
-    const goBack = () => {
-  router.push('/candidates').then(() => {
-    router.go(0); // Force un rafraîchissement si nécessaire
-  });
-};
+.premium-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  animation: fadeUp 2.5s ease-out;
+}
+
+/* Bouton Héro */
+.btn-hero-quick {
+  background: rgba(255, 255, 255, 0.103);
+  backdrop-filter: blur(5px);
+  border: 1px solid white;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-family: 'Montserrat';
+  font-weight: 600;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+.btn-hero-quick:hover {
+  background: #D4AF37;
+  border-color: #D4AF37;
+  color: #000;
+  transform: translateY(-5px);
+}
+
+/* Indicateur de scroll */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  animation: bounce 2s infinite;
+}
+.mouse {
+  width: 26px; height: 40px;
+  border: 2px solid rgba(255,255,255,0.6);
+  border-radius: 20px;
+}
+.mouse::after {
+  content: ''; display: block; width: 4px; height: 8px;
+  background: #D4AF37;
+  margin: 6px auto; border-radius: 2px;
+}
+
+/* --- SECTION 2: MANIFESTE --- */
+.manifesto-section {
+  background-color: #fff;
+  padding: 120px 20px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+.manifesto-section.visible { opacity: 1; transform: translateY(0); }
+
+.manifesto-text {
+  font-size: 2rem;
+  margin: 15px 0;
+  line-height: 1.4;
+}
+.small-text { font-size: 1.2rem; font-weight: 600; margin-top: 30px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* --- SECTION 3: SIGNATURE (COULEUR) --- */
+.signature-section {
+  position: relative;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+}
+
+.signature-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://i.pinimg.com/736x/ac/64/a1/ac64a11f2b9d3c58839c541692f0516d.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  /* PLUS DE NOIR ET BLANC */
+  filter: brightness(0.9); 
+  z-index: 0;
+}
+
+.keyword-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  z-index: 2;
+}
+
+.keyword {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 4rem;
+  color: rgba(255,255,255,0.1);
+  -webkit-text-stroke: 2px #fff;
+  letter-spacing: 10px;
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+  z-index:5;
+}
+
+.signature-section.visible .k-2 { color: #D4AF37; -webkit-text-stroke: 0; text-shadow: 0 0 30px rgba(212, 175, 55, 0.8); }
+
+/* --- SECTION 4: L'ÉVÉNEMENT (BLANC) --- */
+.event-section {
+  background-color: #ffffff;
+  padding: 100px 20px;
+  color: #333;
+}
+.event-image-wrapper {
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 20px 20px 0px rgb(245, 245, 245); /* Effet graphique */
+}
+.rounded-shadow {
+  border-radius: 20px;
+  transition: transform 0.5s;
+}
+.rounded-shadow:hover { transform: scale(1.03); }
+
+.subtitle-event { font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
+.event-desc { font-family: 'Montserrat'; font-size: 1.1rem; line-height: 1.8; color: #555; }
+
+.btn-event-link {
+  background: transparent;
+  color:#d6ad28;
+  border: 2px solid #d6ad28;
+  padding: 10px 25px;
+  font-weight: 700;
+  font-family: 'Montserrat';
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+.btn-event-link:hover { background: #d6ad28; color: #fff; }
 
 
-  </script>
+/* --- SECTION 5: APERÇU (TOP 3 RÉEL) --- */
+.preview-section {
+  background-color:rgb(241, 243, 245); /* Pas noir, un gris très très clair */
+  padding: 100px 20px;
+}
+
+.preview-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.preview-card {
+  width: 280px;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: 0.4s ease;
+}
+.preview-card:hover { transform: translateY(-15px); }
+
+.preview-card img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.rank-badge {
+  position: absolute;
+  top: 15px; left: 15px;
+  background: #D4AF37;
+  color: white;
+  font-weight: bold;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 5;
+}
+
+.preview-info {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  color: white;
+  text-align: center;
+}
+.preview-info h4 { font-family: 'Montserrat'; font-weight: 600; font-size: 1.1rem; }
+.vote-pill { font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 10px; }
+
+.btn-noble-outline {
+  background: #f0aa14;
+  border: 1px solid #D4AF37;
+  color: #ffffff; /* Or plus foncé pour lisibilité sur fond clair */
+  padding: 15px 40px;
+  font-family: 'Montserrat';
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.btn-noble-outline:hover { background: #D4AF37; color: #fff; }
+
+/* --- SECTION 6: CTA NOBLE (BLANC) --- */
+.cta-noble-section {
+  
+  position: relative;
+  padding: 120px 20px;
+  text-align: center;
+  background: white; /* BLANC */
+}
+
+.cta-title { font-size: 3.5rem; margin-bottom: 10px; }
+.cta-subtitle { font-family: 'Montserrat'; font-size: 1.2rem; margin-bottom: 40px; font-weight: 500; }
+
+.btn-noble-gold {
+  background: #e6b515; /* JAUNE DORÉ */
+  color:rgb(255, 255, 255);
+  padding: 18px 60px;
+  border: none;
+  /* border-radius: 5px; */
+  font-family: 'Montserrat';
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+.btn-noble-gold:hover { transform: scale(1.05); background: #c5a028; }
+
+/* --- SECTION 7: FOOTER --- */
+.elegant-footer {
+  background: #050505;
+  padding: 60px 20px;
+  color: rgba(255,255,255,0.6);
+}
+.footer-logo { width: 200px; opacity: 0.9; } /* LOGO 200PX */
+.footer-title { color: #D4AF37; font-size: 1.5rem; }
+.footer-divider { width: 50px; height: 1px; background: #333; margin: 30px auto; }
+.social-links { margin-bottom: 30px; font-size: 1.5rem; }
+.social-links a { color: rgba(255,255,255,0.4); margin: 0 15px; transition: 0.3s; }
+.social-links a:hover { color: #D4AF37; }
+.copyright { font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 1px; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  /* .main-title { font-size: 2.8rem; } */
+  .manifesto-text { font-size: 1.3rem; }
+  .keyword { font-size: 2.5rem; }
+  .preview-card { width: 100%; height: 350px; }
+  .cta-title { font-size: 2.5rem; }
+  .section-title{font-size: 2.5rem; margin:2rem;}
+}
+
+/* ANIMATIONS GENERALES */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);} 40% {transform: translateY(-10px) translateX(-50%);} 60% {transform: translateY(-5px) translateX(-50%);} }
+</style>
