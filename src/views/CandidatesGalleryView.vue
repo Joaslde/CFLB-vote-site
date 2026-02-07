@@ -1,5 +1,5 @@
 <template>
-  <div class="complet">
+  <div class="complet mt-5">
     <div class="page-container">
       <header class="page-header container mt-5 mb-5 text-center text-md-start">
         <h1 class="premium-title">Les Candidates</h1>

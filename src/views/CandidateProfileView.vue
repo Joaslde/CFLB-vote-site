@@ -1,6 +1,6 @@
 <template>
   <div class="profile-page" v-if="candidate">
-    <button class="back-button" @click="goBack">
+    <button class="back-button" @click="router.push('/candidates')">
       <i class="bi bi-chevron-left"></i>
     </button>
 

@@ -2,26 +2,53 @@
   <div class="home-container">
     
     <section class="hero-section">
-      <video autoplay muted loop playsinline class="hero-video">
-        <source src="../assets/video2.mp4" type="video/mp4">
-      </video>
-      <div class="hero-overlay"></div>
+  <nav class="hero-navbar d-none d-lg-flex" :class="{ 'is-scrolled': isScrolled }">
+    
+    <div class="nav-brand">
+      <img :src="logo" alt="CFLB Logo" class="nav-logo">
+    </div>
+
+    <div class="nav-center-pill">
+      <router-link to="/" class="nav-link" active-class="active-link">Accueil</router-link>
+      <router-link to="/evenement" class="nav-link" active-class="active-link">Événement</router-link>
+      <router-link to="/candidates" class="nav-link" active-class="active-link">Candidates</router-link>
+      <router-link to="/ticket" class="nav-link highlight-link" active-class="active-link">Ticket</router-link>
+    </div>
+
+    <div class="nav-socials">
+      <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+      <a href="#" class="social-icon"><i class="bi bi-tiktok"></i></a>
+      <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+    </div>
+  </nav>
+
+  <video autoplay muted loop playsinline class="hero-video">
+    <source src="../assets/video2.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-card-frame">
+    <div class="navbar-placeholder"></div>
+
+    <div class="hero-content fade-in-up">
+      <h1 class="premium-title main-title">
+        Célébrer le Leadership <span class="text-gold">Féminin</span>
+      </h1>
+      <p class="premium-subtitle">Conférence des Femmes Leaders du Bénin – Vote Officiel</p>
       
-      <div class="hero-content fade-in-up">
-        <h1 class="premium-title main-title">Célébrer le Leadership  <span class="text-gold" >Féminin </span></h1>
-        <p class="premium-subtitle">Conférence des Femmes Leaders du Bénin – Vote Officiel</p>
-        
-        <div class="mt-4">
-          <button class="btn-hero-quick" @click="router.push('/candidates')">
-            VOTER MAINTENANT
-          </button>
-        </div>
+      <div class="hero-actions">
+        <button class="btn-hero-quick" @click="router.push('/candidates')">
+          VOTER MAINTENANT
+        </button>
+        <button class="btn-hero-quick" @click="router.push('/evenement')"> 
+          <!-- class caher ecran mobile = btn-event-participate -->
+          PARTICIPER
+        </button>
       </div>
-      
-      <div class="scroll-indicator">
-        <div class="mouse"></div>
-      </div>
-    </section>
+    </div>
+  </div>
+
+</section>
 
     <section class="manifesto-section scroll-trigger">
       <div class="container text-center">
@@ -126,7 +153,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import logo from '../assets/CFLB-logo-bgless.png'; 
@@ -160,6 +187,22 @@ onMounted(async () => {
   }
 );
 });
+
+//scroll----
+const isScrolled = ref(false);
+
+const handleScroll = () => {
+  // Si on descend de plus de 50px, on active le mode sticky
+  isScrolled.value = window.scrollY > 50;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
@@ -190,6 +233,128 @@ onMounted(async () => {
 .premium-title {font-family: 'Lobster', cursive; font-size: 10rem; }
 
 /* --- SECTION 1: HERO --- */
+
+/* --- NAVBAR HERO (PC Only) --- */
+.hero-navbar {
+  position: fixed;
+  top: 50px; /* Position initiale : à l'intérieur de la bordure blanche */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%; /* Largeur initiale : alignée avec la bordure blanche */
+  max-width: 1300px;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Transition fluide */
+  margin-top: -8px;
+}
+
+/* --- ÉLÉMENTS DE LA NAVBAR --- */
+
+/* 1. Logo */
+.nav-logo {
+  height: 100px;
+  width: auto;
+  transition: 0.3s;
+}
+
+/* 2. Le Cylindre Central (Glassmorphism) */
+.nav-center-pill {
+  background: rgba(255, 255, 255, 0.1); /* Verre transparent */
+  backdrop-filter: blur(12px); /* Flou derrière */
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Bordure subtile */
+  border-radius: 50px; /* Forme cylindrique */
+  padding: 12px 40px;
+  display: flex;
+  gap: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+}
+
+/* Liens */
+.nav-link {
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  transition: 0.3s;
+}
+
+/* Effet Hover & Active */
+.nav-link:hover, .nav-link.active-link {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* Petite ligne dorée au survol */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 20px;
+  height: 2px;
+  background-color: #D4AF37; /* OR */
+  transition: 0.3s ease;
+}
+
+.nav-link:hover::after, .nav-link.active-link::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Lien "Ticket" spécial */
+.highlight-link {
+  color: #D4AF37 !important;
+  font-weight: 700;
+}
+
+/* 3. Réseaux Sociaux */
+.nav-socials {
+  display: flex;
+  gap: 20px;
+}
+.social-icon {
+  color: white;
+  font-size: 1.2rem;
+  transition: 0.3s;
+  opacity: 0.8;
+}
+.social-icon:hover {
+  opacity: 1;
+  color: #D4AF37;
+  transform: translateY(-3px);
+}
+
+/* --- ÉTAT SCROLLÉ (STICKY MODE) --- */
+.hero-navbar.is-scrolled {
+  top: 0;
+  width: 100%;
+  max-width: none;
+  border-radius: 0;
+  padding: 15px 50px;
+  /* Fond global sombre pour la lisibilité sur les sections blanches */
+  background: rgba(10, 10, 10, 0.85); 
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding:1px;
+}
+
+/* En mode scrollé, le cylindre central perd son fond pour se fondre dans la barre */
+.hero-navbar.is-scrolled .nav-center-pill {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  backdrop-filter: none;
+}
 .hero-section {
   position: relative;
   height: 100vh;
@@ -209,6 +374,7 @@ onMounted(async () => {
   z-index: 0;
   /* On garde un léger filtre pour que le texte blanc soit lisible */
   filter: brightness(0.8); 
+  object-position: 100% 25%;
 }
 
 .hero-overlay {
@@ -242,6 +408,8 @@ onMounted(async () => {
   .hero-content {
     padding: 1px; /* On réduit le padding pour laisser plus de place au texte */
     width: 95%;    /* On occupe presque tout l'écran */
+    margin-left:5px;
+    margin-top:90px;
     
   }
 
@@ -275,7 +443,7 @@ onMounted(async () => {
 /* Bouton Héro */
 .btn-hero-quick {
   background: rgba(255, 255, 255, 0.103);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(7px);
   border: 1px solid white;
   color: white;
   padding: 12px 30px;
@@ -292,25 +460,6 @@ onMounted(async () => {
   transform: translateY(-5px);
 }
 
-/* Indicateur de scroll */
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  animation: bounce 2s infinite;
-}
-.mouse {
-  width: 26px; height: 40px;
-  border: 2px solid rgba(255,255,255,0.6);
-  border-radius: 20px;
-}
-.mouse::after {
-  content: ''; display: block; width: 4px; height: 8px;
-  background: #D4AF37;
-  margin: 6px auto; border-radius: 2px;
-}
 
 /* --- SECTION 2: MANIFESTE --- */
 .manifesto-section {
@@ -372,6 +521,106 @@ onMounted(async () => {
 }
 
 .signature-section.visible .k-2 { color: #D4AF37; -webkit-text-stroke: 0; text-shadow: 0 0 30px rgba(212, 175, 55, 0.8); }
+
+/* --------Nouveau style--------- */
+
+
+/* --- CONFIGURATION PC (Uniquement pour écrans > 1024px) --- */
+@media (min-width: 1024px) {
+  
+  /* On remonte la vue globale du contenu */
+  .hero-section {
+    align-items: flex-start; /* Aligne en haut au lieu du centre */
+    padding-top: 10vh;
+  }
+
+  /* La bordure blanche fine inspirée de "Câlin" */
+  .hero-card-frame {
+    position: absolute;
+    inset: 30px; /* Distance du bord de l'écran (marge interne) */
+    border: 2px solid rgba(255, 255, 255, 0.6); /* Bordure fine blanche */
+    border-radius: 40px; /* Coins arrondis */
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alignement vers le haut */
+    padding: 60px; /* Espace interne à la carte */
+    pointer-events: none; /* Pour que la bordure ne gêne pas les clics */
+  }
+
+  /* On réactive les clics pour le contenu à l'intérieur */
+  .hero-content {
+    pointer-events: auto;
+    text-align: left; /* Alignement à gauche */
+    max-width: 700px; /* Largeur pour forcer le passage à la ligne */
+    margin-top: 10vh; /* Fait descendre le texte un peu sous la future navbar */
+    margin-left: 0;
+  }
+
+  .main-title {
+    font-size: 4.5rem; /* Taille plus élégante et "petite" sur PC */
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .premium-subtitle {
+    font-size: 1.1rem;
+    max-width: 500px; /* Texte bien rangé à gauche */
+    margin-bottom: 40px;
+  }
+
+  /* Conteneur des boutons */
+  .hero-actions {
+    display: flex;
+    gap: 20px; /* Espace entre les deux boutons */
+    align-items: center;
+  }
+
+  .btn-hero-quick, .btn-event-participate {
+    margin-top: 0; /* On enlève le margin top par défaut du mobile */
+  }
+
+  /* Style du nouveau bouton PC */
+  .btn-event-participate {
+    display: inline-block; /* On l'affiche sur PC */
+    background: transparent;
+    backdrop-filter: blur(7px);
+    border: 1.5px solid #ffffff;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-event-participate:hover {
+    background: white;
+    color: black;
+  }
+
+  /* Placeholder pour la navbar en haut */
+  .navbar-placeholder {
+    height: 80px;
+    width: 100%;
+  }
+}
+
+/* --- AJUSTEMENT MOBILE (POUR LE BOUTON) --- */
+@media (max-width: 1023px) {
+  /* On s'assure que la bordure et le 2ème bouton n'existent pas sur mobile */
+  .hero-card-frame {
+    border: none;
+    position: relative;
+    padding: 0;
+  }
+  
+  .btn-event-participate {
+    display: none; /* CACHÉ SUR MOBILE */
+  }
+}
+
 
 /* --- SECTION 4: L'ÉVÉNEMENT (BLANC) --- */
 .event-section {

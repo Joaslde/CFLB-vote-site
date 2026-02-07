@@ -55,8 +55,8 @@ const handleSearch = () => {
 <style scoped>
 .search-wrapper {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 103px;
+  right: 35px;
   z-index: 1000;
   display: flex;
   align-items: center;

@@ -1,6 +1,9 @@
 <script setup>
-  import { RouterView } from 'vue-router'
+  import { RouterView , useRoute} from 'vue-router'
   import AppLoader from './components/AppLoader.vue'
+  import NavbarPC from './components/NavbarPC.vue';
+  import MobileNavbar from './components/MobileNavbar.vue';
+  const route = useRoute();
   </script>
   
   <template>
@@ -13,6 +16,12 @@
         </transition>
       </router-view>
     </main>
+    <div id="app">
+      <NavbarPC v-if="route.path !== '/'" />
+
+    <MobileNavbar />
+  </div>
+
   </template>
   
   <style>
