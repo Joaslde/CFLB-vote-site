@@ -14,16 +14,16 @@ const routes = [
     name: 'candidates',
     component: () => import('../views/CandidatesGalleryView.vue')
   },
-  // {
-  //   path: '/evenement',
-  //   name: 'evenement',
-  //   component: () => import('../views/EvenementView.vue')
-  // },
-  // {
-  //   path: '/ticket',
-  //   name: 'ticket',
-  //   component: () => import('../views/TicketView.vue')
-  // },
+  {
+    path: '/ticket',
+    name: 'ticket',
+    component: () => import('../views/TicketView.vue')
+  },
+  {
+    path: '/merci-ticket',
+    name: 'merci-ticket',
+    component: () => import('../views/MerciTicketView.vue')
+  },
   {
     path: '/candidate/:id',
     name: 'candidate-profile',

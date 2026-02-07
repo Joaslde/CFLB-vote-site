@@ -355,6 +355,10 @@ onUnmounted(() => {
   padding: 0;
   backdrop-filter: none;
 }
+
+
+
+
 .hero-section {
   position: relative;
   height: 100vh;
