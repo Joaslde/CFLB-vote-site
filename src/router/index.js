@@ -25,6 +25,11 @@ const routes = [
     component: () => import('../views/MerciTicketView.vue')
   },
   {
+    path: '/scanqrcode',
+    name: 'scanqrcode',
+    component: () => import('../views/ScanView.vue')
+  },
+  {
     path: '/candidate/:id',
     name: 'candidate-profile',
     component: () => import('../views/CandidateProfileView.vue')

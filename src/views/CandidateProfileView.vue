@@ -116,11 +116,11 @@ const showNotify = (msg, type = 'success') => {
 const totalPrice = computed(() => voteAmount.value * PRICE_PER_VOTE);
 
 // Correction bug page blanche : on force la navigation propre
-const goBack = () => {
-  router.push('/candidates').then(() => {
-    router.go(0); // Force un rafraîchissement si nécessaire
-  });
-};
+// const goBack = () => {
+//   router.push('/candidates').then(() => {
+//     router.go(0); // Force un rafraîchissement si nécessaire
+//   });
+// };
 
 const loadCandidate = async () => {
   try {

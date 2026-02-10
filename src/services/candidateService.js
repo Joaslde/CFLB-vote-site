@@ -6,7 +6,7 @@ export const candidateService = {
     const { data, error } = await supabase
       .from('candidates')
       .select('*')
-      .order('votes_count', { ascending: false }) // Les plus votées en premier
+      .order('votes_count', { ascending: false }) // ordre par nombre de vote
 
     if (error) {
       console.error('Erreur lors de la récupération des candidates:', error.message)
@@ -15,7 +15,7 @@ export const candidateService = {
     return data
   },
 
-  // Récupérer une seule candidate par son ID (pour la page de profil)
+  // Récupérer candidate par son ID (pour la page de profil)
   async getCandidateById(id) {
     const { data, error } = await supabase
       .from('candidates')
