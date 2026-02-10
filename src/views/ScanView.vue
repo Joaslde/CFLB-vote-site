@@ -99,7 +99,7 @@
   
       if (result.status === 'success') {
         await Swal.fire({
-          title: 'BILLET VALIDE ✅',
+          title: 'BILLET VALIDE ',
           html: `<b style="font-size: 1.5rem;">${result.buyer}</b>`,
           icon: 'success',
           confirmButtonText: 'VALIDER L\'ENTRÉE',
@@ -108,7 +108,7 @@
         });
       } else if (result.status === 'already_used') {
         await Swal.fire({
-          title: 'DÉJÀ UTILISÉ ⚠️',
+          title: 'DÉJÀ UTILISÉ ',
           text: 'Ce ticket a déjà été scanné.',
           icon: 'error',
           confirmButtonText: 'REFUSER L\'ACCÈS',
@@ -117,7 +117,7 @@
         });
       } else {
         await Swal.fire({
-          title: 'CODE INVALIDE ❌',
+          title: 'CODE INVALIDE ',
           text: 'Ce code n\'existe pas.',
           icon: 'warning',
           confirmButtonText: 'RESAISIR',
