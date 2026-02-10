@@ -221,14 +221,6 @@
     pointer-events: none;
   }
   
-  .target-box {
-    width: 250px;
-    height: 250px;
-    border: 3px solid #D4AF37;
-    border-radius: 20px;
-    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5); /* Effet focus */
-    position: relative;
-  }
   
   /* Coins du cadre pour le look "scanner" */
   .target-box::before {
