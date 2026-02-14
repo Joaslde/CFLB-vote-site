@@ -2,59 +2,59 @@
   <div class="home-container">
     
     <section class="hero-section">
-  <nav class="hero-navbar d-none d-lg-flex" :class="{ 'is-scrolled': isScrolled }">
-    
-    <div class="nav-brand">
-      <img :src="logo" alt="CFLB Logo" class="nav-logo">
-    </div>
+      <nav class="hero-navbar d-none d-lg-flex" :class="{ 'is-scrolled': isScrolled }">
+        <div class="nav-brand">
+          <img :src="logo" alt="CFLB Logo" class="nav-logo">
+        </div>
 
-    <div class="nav-center-pill">
-      <router-link to="/" class="nav-link" active-class="active-link">Accueil</router-link>
-      <router-link to="/evenement" class="nav-link" active-class="active-link">Événement</router-link>
-      <router-link to="/candidates" class="nav-link" active-class="active-link">Candidates</router-link>
-      <router-link to="/ticket" class="nav-link highlight-link" active-class="active-link">Ticket</router-link>
-    </div>
+        <div class="nav-center-pill">
+          <router-link to="/" class="nav-link" active-class="active-link">Accueil</router-link>
+          <router-link to="/evenement" class="nav-link" active-class="active-link">Événement</router-link>
+          <router-link to="/candidates" class="nav-link" active-class="active-link">Candidates</router-link>
+          <router-link to="/ticket" class="nav-link highlight-link" active-class="active-link">Ticket</router-link>
+        </div>
 
-    <div class="nav-socials">
-      <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-      <a href="#" class="social-icon"><i class="bi bi-tiktok"></i></a>
-      <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-    </div>
-  </nav>
+        <div class="nav-socials">
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-tiktok"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+        </div>
+      </nav>
 
-  <video autoplay muted loop playsinline class="hero-video">
-    <source src="../assets/video2.mp4" type="video/mp4">
-  </video>
-  <div class="hero-overlay"></div>
+      <video autoplay muted loop playsinline class="hero-video">
+        <source src="../assets/video2.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
 
-  <div class="hero-card-frame">
-    <div class="navbar-placeholder"></div>
+      <div class="hero-card-frame">
+        <div class="navbar-placeholder"></div>
 
-    <div class="hero-content fade-in-up">
-      <h1 class="premium-title main-title">
-        Célébrer le Leadership <span class="text-gold">Féminin</span>
-      </h1>
-      <p class="premium-subtitle">Conférence des Femmes Leaders du Bénin – Vote Officiel</p>
-      
-      <div class="hero-actions">
-        <button class="btn-hero-quick" @click="router.push('/candidates')">
-          VOTER MAINTENANT
-        </button>
-        <button class="btn-hero-quick" @click="router.push('/evenement')"> 
-          <!-- class caher ecran mobile = btn-event-participate -->
-          PARTICIPER
-        </button>
+        <div class="hero-content fade-in-up">
+          <h1 class="premium-title main-title">
+            Conférence des Femmes <span class="text-gold">Leaders du Bénin</span>
+          </h1>
+          <p class="premium-subtitle">
+            2ᵉ Édition — 21 Mars 2026  Université d’Abomey-Calavi
+          </p>
+          
+          <div class="hero-actions">
+            <button class="btn-hero-quick" @click="router.push('/candidates')">
+              DÉCOUVRIR LES CANDIDATES
+            </button>
+
+            <button class="btn-hero-quick " @click="router.push('/ticket')"> 
+              RÉSERVER MON PASSE
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-</section>
+    </section>
 
     <section class="manifesto-section scroll-trigger">
       <div class="container text-center">
-        <p class="manifesto-text font-premium text-red">L'excellence n'est pas un acte,</p>
-        <p class="manifesto-text font-main text-dark">C'est une habitude cultivée dans l'ombre,</p>
-        <p class="manifesto-text font-main text-gold small-text">Révélée aujourd'hui à la lumière.</p>
+        <p class="manifesto-text font-premium text-red">Une plateforme d'inspiration et d'impact,</p>
+        <p class="manifesto-text font-main text-dark">où le leadership féminin prend toute sa dimension,</p>
+        <p class="manifesto-text font-main text-gold small-text">et où l’excellence devient visible.</p>
       </div>
     </section>
 
@@ -64,7 +64,7 @@
         <div class="keyword-container">
           <span class="keyword k-1">VISION</span>
           <span class="keyword k-2">IMPACT</span>
-          <span class="keyword k-3">PRESTANCE</span>
+          <span class="keyword k-3">INNOVATION</span>
         </div>
       </div>
     </section>
@@ -79,9 +79,9 @@
           </div>
           <div class="col-lg-6 text-center text-lg-start ps-lg-5">
             <h2 class="font-premium text-red section-title mb-3">L'Événement</h2>
-            <!-- <h3 class="font-main text-dark subtitle-event">Une nuit pour l'histoire.</h3> -->
             <p class="event-desc">
-              La Conférence des Femmes Leaders du Bénin (CFLB) n'est pas une simple cérémonie, c'est l'apogée d'une année d'impact. C'est ici que les visions se rencontrent et que l'excellence est couronnée. Découvrez le programme, les enjeux et la vision derrière cette initiative prestigieuse.
+              La Conférence des Femmes Leaders du Bénin est une plateforme nationale dédiée à la promotion du leadership féminin, de l’innovation et de l’excellence.
+              Le 21 mars 2026, l’Université d’Abomey-Calavi accueillera une matinée stratégique réunissant leaders, entrepreneurs, jeunesse engagée et acteurs du changement.
             </p>
             
             <button class="btn-event-link mt-4" @click="router.push('/evenement')">
@@ -95,8 +95,8 @@
     <section class="preview-section scroll-trigger">
       <div class="container">
         <div class="text-center mb-5">
-          <h2 class="font-premium text-red section-title ">Les Favorites</h2>
-          <p class="text-muted">Le classement actuel en temps réel</p>
+          <h2 class="font-premium text-red section-title ">Les Candidates 2026</h2>
+          <p class="event-desc">Classement en temps réel basé sur les votes du public.</p>
         </div>
         
         <div class="preview-grid">
@@ -127,25 +127,29 @@
 
     <section class="cta-noble-section scroll-trigger">
       <div class="content-wrapper">
-        <h2 class="font-premium text-red cta-title">Faites partie de l'histoire</h2>
-        <p class="cta-subtitle text-dark">Votre soutien définit l'excellence de demain.</p>
-        <button class="btn-noble-gold" @click="router.push('/candidates')">
-          ACCÉDER AU VOTE
+        <h2 class="font-premium text-red cta-title">Rejoignez l’expérience CFLB 2026</h2>
+        <p class="cta-subtitle text-dark">Inspirez-vous. Connectez-vous. Prenez part à un mouvement d’impact.</p>
+        <button class="btn-noble-gold" @click="router.push('/ticket')">
+          ACHETER MON PASSE
         </button>
       </div>
     </section>
 
-    <footer class="elegant-footer">
+    <footer class="elegant-footer"   >
       <div class="container text-center">
         <img :src="logo" alt="Logo CFLB" class="footer-logo mb-4">
         <h4 class="font-premium footer-title">Conférence des Femmes Leaders du Bénin</h4>
         <div class="footer-divider"></div>
         <div class="social-links">
-          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-whatsapp"></i></a>
           <a href="#"><i class="bi bi-facebook"></i></a>
           <a href="#"><i class="bi bi-linkedin"></i></a>
         </div>
-        <p class="copyright">© 2026 CFLB. Tous droits réservés. L'élégance est une attitude.</p>
+        <p class="copyright">© 2026 CFLB. Tous droits réservés. Leadership • Innovation • Excellence</p>
+        
+        <p class="dev-signature mt-3">
+          Design & Code par <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
+        </p>
       </div>
     </footer>
 
@@ -184,15 +188,13 @@ onMounted(async () => {
 
   document.querySelectorAll('.scroll-trigger').forEach((el) => {
     observer.observe(el);
-  }
-);
+  });
 });
 
-//scroll----
+// Gestion du Scroll pour la Navbar
 const isScrolled = ref(false);
 
 const handleScroll = () => {
-  // Si on descend de plus de 50px, on active le mode sticky
   isScrolled.value = window.scrollY > 50;
 };
 
@@ -202,6 +204,27 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+});
+
+
+// Dans ton script setup
+onMounted(() => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  
+  if (isIOS) {
+    const signatureBg = document.querySelector('.signature-bg');
+    
+    // On simule le fixed avec du JS
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const section = document.querySelector('.signature-section');
+      const sectionTop = section.offsetTop;
+      
+      if (scrolled >= sectionTop) {
+        signatureBg.style.transform = `translateY(${scrolled - sectionTop}px)`;
+      }
+    });
+  }
 });
 </script>
 
@@ -420,7 +443,7 @@ onUnmounted(() => {
   .main-title {
     /* 10vw signifie 10% de la largeur de l'écran. 
        C'est dynamique : ça grossit sur grand mobile et réduit sur petit. */
-    font-size: 2.5rem; 
+    font-size: 2.4rem; 
     font-weight:9px;
     line-height: 1.3;
     margin-bottom: 25px;
@@ -448,7 +471,7 @@ onUnmounted(() => {
 .btn-hero-quick {
   background: rgba(255, 255, 255, 0.103);
   backdrop-filter: blur(7px);
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   padding: 12px 30px;
   border-radius: 50px;
@@ -778,6 +801,26 @@ onUnmounted(() => {
   .footer-title { margin-top: -2rem; }
 
 
+}
+/* --- AJOUTS CSS POUR LA SIGNATURE --- */
+.dev-signature {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3); /* Très discret de base */
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.dev-signature a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dev-signature a:hover {
+  color: #D4AF37; /* S'illumine en or au survol */
+  text-decoration: underline;
 }
 
 /* ANIMATIONS GENERALES */

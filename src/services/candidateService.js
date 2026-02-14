@@ -29,6 +29,23 @@ export const candidateService = {
     }
     return data
   },
+
+    // Récupérer candidate par sa catégorie
+
+  async getCandidatesByCategory(category) {
+    const { data, error } = await supabase
+      .from('candidates')
+      .select('*')
+      .eq('categorie', category) // Filtre par la colonne 'categorie'
+      .order('votes_count', { ascending: false }); // Classement par votes
+
+    if (error) {
+      console.error('Erreur récupération candidates:', error.message);
+      throw error;
+    }
+    return data;
+  },
+
   // Ajoute cette fonction à ton objet candidateService
 async incrementVotes(id, votes_count) {
   const { data, error } = await supabase.rpc('increment_candidate_votes', {

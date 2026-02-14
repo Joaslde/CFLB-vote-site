@@ -9,12 +9,17 @@
         <h4 class="font-premium footer-title">Conférence des Femmes Leaders</h4>
         <div class="footer-divider"></div>
         <div class="social-links">
-          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-whatsapp"></i></a>
           <a href="#"><i class="bi bi-facebook"></i></a>
           <a href="#"><i class="bi bi-linkedin"></i></a>
         </div>
-        <p class="copyright">© 2026 CFLB. Tous droits réservés. L'élégance est une attitude.</p>
+        <p class="copyright">© 2026 CFLB. Tous droits réservés. Leadership • Innovation • Excellence</p>
+        
+        <p class="dev-signature mt-3">
+          Design & Code par <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
+        </p>
       </div>
+      
     </footer>
 </template>
 
@@ -36,6 +41,25 @@
 @media ( max-width: 768px ) {
   .footer-logo {  margin-bottom: -5rem ; } /* LOGO 200PX */
   .footer-title { margin-top: -2rem; }
+}
+.dev-signature {
+  font-family: 'Montserrat', sans-serif;
+  font-size: .8rem;
+  color: rgba(255, 255, 255, 0.3); /* Très discret de base */
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.dev-signature a {
+  color: rgba(255, 255, 255, 0.5);
+  
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dev-signature a:hover {
+  color: #D4AF37; /* S'illumine en or au survol */
+  text-decoration: underline;
 }
 
 </style>  
