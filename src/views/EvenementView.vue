@@ -9,7 +9,7 @@
       <div class="hero-overlay"></div>
       
       <div class="hero-content container text-center fade-in-up">
-        <h1 class="hero-title">Conférence des Femmes Leaders du Bénin</h1>
+        <h1 class="hero-title">Conférence des Femmes <span class="text-gold">Leaders du Bénin</span></h1>
         <h2 class="hero-subtitle">Inspirer. Connecter. Propulser.</h2>
         
         <div class="hero-buttons">
