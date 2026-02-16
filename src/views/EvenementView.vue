@@ -44,7 +44,7 @@
     <section class="section-concept container py-5">
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
-            <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=1000&auto=format&fit=crop" alt="Conférence Concept" class="img-fluid reveal-img shadow-lg">
+            <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=1000&auto=format&fit=crop" alt="Concept de la Conférence des Femmes Leaders du Bénin 2026" class="img-fluid reveal-img shadow-lg">
           </div>
           <div class="col-lg-6 ps-lg-5">
             <h2 class="section-title">Une vision claire. <span class="text-gold">Un impact réel.</span></h2>
@@ -223,6 +223,115 @@
   <script setup>
   import { useRouter } from 'vue-router';
   import Footer from '../components/Footer.vue';
+  import { useHead } from '@vueuse/head'
+
+ 
+
+useHead({
+  title: 'Programme Officiel & Informations | Conférence des Femmes Leaders du Bénin 2026',
+
+  meta: [
+    {
+      name: 'description',
+      content: "Découvrez le programme officiel, les horaires, le lieu et les détails de la Conférence des Femmes Leaders du Bénin 2026 à l’Université d’Abomey-Calavi."
+    },
+    {
+      name: 'keywords',
+      content: 'Programme conférence femmes leaders Bénin, événement leadership féminin 2026, Université Abomey-Calavi conférence, CFLB programme officiel'
+    },
+
+    // Open Graph
+    {
+      property: 'og:title',
+      content: 'Programme Officiel - CFLB 2026'
+    },
+    {
+      property: 'og:description',
+      content: 'Tous les détails de la Conférence des Femmes Leaders du Bénin 2026 : date, lieu, programme et réservation.'
+    },
+    {
+      property: 'og:type',
+      content: 'event'
+    },
+    {
+      property: 'og:url',
+      content: 'https://cflb.fr/evenement'
+    },
+    {
+      property: 'og:image',
+      content: 'https://cflb.fr/preview-home.jpg'
+    },
+
+    // Twitter
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: 'Programme Officiel - CFLB 2026'
+    },
+    {
+      name: 'twitter:description',
+      content: 'Date, lieu et programme complet de la Conférence des Femmes Leaders du Bénin.'
+    },
+    {
+      name: 'twitter:image',
+      content: 'https://cflb.fr/preview-home.jpg'
+    }
+  ],
+
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://cflb.fr/evenement'
+    }
+  ]
+})
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "Conférence des Femmes Leaders du Bénin 2026",
+        "description": "Plateforme nationale dédiée au leadership féminin, à l’innovation et à l’excellence.",
+        "startDate": "2026-03-21T09:00:00+01:00",
+        "endDate": "2026-03-21T13:00:00+01:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Université d'Abomey-Calavi - Amphithéâtre Idriss DEBY",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BJ"
+          }
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Comité d’Organisation de la Conférence des Femmes Leaders du Bénin",
+          "url": "https://cflb.fr/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://cflb.fr/ticket",
+          "price": "3000",
+          "priceCurrency": "XOF",
+          "availability": "https://schema.org/InStock",
+          "validFrom": "2026-02-21T00:00:00+01:00"
+        },
+        "image": [
+          "https://cflb.fr/preview-home.jpg"
+        ]
+      })
+    }
+  ]
+})
+
+
   
   const router = useRouter();
   

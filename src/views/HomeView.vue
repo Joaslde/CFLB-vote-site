@@ -74,7 +74,7 @@
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
              <div class="event-image-wrapper">
-                <img src="https://i.pinimg.com/736x/74/d1/3b/74d13bc40b688bd8e0dd0f9a1d66aff1.jpg" alt="Event" class="img-fluid rounded-shadow">
+                <img src="https://i.pinimg.com/736x/74/d1/3b/74d13bc40b688bd8e0dd0f9a1d66aff1.jpg" alt="Conférence des Femmes Leaders du Bénin" class="img-fluid rounded-shadow">
              </div>
           </div>
           <div class="col-lg-6 text-center text-lg-start ps-lg-5">
@@ -108,7 +108,7 @@
           >
             <div class="rank-badge">#{{ index + 1 }}</div>
             
-            <img :src="candidate.photo" :alt="candidate.nom">
+            <img :src="candidate.photo" :alt="`Candidate ${candidate.nom} - CFLB 2026`">
             
             <div class="preview-info">
               <h4>{{ candidate.nom }}</h4>
@@ -151,6 +151,18 @@
           Design & Code par <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
         </p>
       </div>
+
+      <section class="seo-content container mt-5">
+
+  <h2>À propos de la Conférence des Femmes Leaders du Bénin</h2>
+  <p>
+    La CFLB est un événement annuel visant à promouvoir le leadership féminin au Bénin
+    en réunissant des femmes influentes, des entrepreneures, des décideurs et la jeunesse engagée.
+    Cette 2ᵉ édition se tiendra à l’Université d’Abomey-Calavi le 21 mars 2026.
+  </p>
+</section>
+
+
     </footer>
 
   </div>
@@ -161,6 +173,111 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import logo from '../assets/CFLB-logo-bgless.png'; 
+import { useHead } from '@vueuse/head'
+
+useHead({
+  title: 'Conférence des Femmes Leaders du Bénin 2026 | CFLB Officiel',
+  
+  meta: [
+    {
+      name: 'description',
+      content: "La Conférence des Femmes Leaders du Bénin 2026 (CFLB) se tiendra le 21 mars 2026 à l’Université d’Abomey-Calavi. Leadership féminin, innovation et excellence au cœur d’un événement national."
+    },
+    {
+      name: 'keywords',
+      content: 'Conférence femmes leaders Bénin, leadership féminin Bénin, CFLB 2026, événement Université Abomey-Calavi, femmes entrepreneures Bénin'
+    },
+
+    // Open Graph
+    {
+      property: 'og:title',
+      content: 'Conférence des Femmes Leaders du Bénin 2026 | CFLB'
+    },
+    {
+      property: 'og:description',
+      content: "Plateforme nationale dédiée au leadership féminin au Bénin. Rendez-vous le 21 mars 2026 à l’Université d’Abomey-Calavi."
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:url',
+      content: 'https://cflb.fr/'
+    },
+    {
+      property: 'og:image',
+      content: 'https://cflb.fr/preview-home.jpg'
+    },
+
+    // Twitter
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: 'CFLB 2026 - Conférence des Femmes Leaders du Bénin'
+    },
+    {
+      name: 'twitter:description',
+      content: 'Leadership féminin, innovation et excellence au Bénin.'
+    },
+    {
+      name: 'twitter:image',
+      content: 'https://cflb.fr/preview-home.jpg'
+    }
+  ],
+
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://cflb.fr/'
+    }
+  ]
+})
+
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "Conférence des Femmes Leaders du Bénin 2026",
+        "startDate": "2026-03-21T09:00:00+01:00",
+        "endDate": "2026-03-21T13:00:00+01:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Université d'Abomey-Calavi",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BJ"
+          }
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Conférence des Femmes Leaders du Bénin",
+          "url": "https://cflb.fr/"
+        },
+        "image": [
+          "https://cflb.fr/preview-home.jpg"
+        ],
+        "description": "Plateforme nationale dédiée au leadership féminin, à l’innovation et à l’excellence au Bénin."
+      })
+    }
+  ]
+})
+
+
+
+
+
+
+
 
 const router = useRouter();
 const topCandidates = ref([]);
@@ -826,4 +943,12 @@ onMounted(() => {
 /* ANIMATIONS GENERALES */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);} 40% {transform: translateY(-10px) translateX(-50%);} 60% {transform: translateY(-5px) translateX(-50%);} }
+</style>
+
+
+
+<style scoped >
+  .seo-content{
+    display: none;
+  } 
 </style>

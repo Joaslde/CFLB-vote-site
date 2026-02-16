@@ -98,36 +98,68 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import logo from '../assets/CFLB-logo-bgless.png';
+import { useHead } from '@vueuse/head';
 
+// 1. DÉCLARER LES RÉFÉRENCES EN PREMIER
 const route = useRoute();
 const router = useRouter();
 const candidate = ref(null);
 const showVoteModal = ref(false);
 const voteAmount = ref(1);
 const PRICE_PER_VOTE = 100;
-
 const notification = ref({ show: false, message: '', type: 'success' });
 
-// Fonction de notification modifiée (pas de disparition auto)
-const showNotify = (msg, type = 'success') => {
-  notification.value = { show: true, message: msg, type: type };
-};
-
+// 2. DÉCLARER LES COMPUTED APRÈS LE CANDIDAT
+const previewImage = computed(() => candidate.value?.photo || 'https://cflb.fr/preview-home.jpg');
+const candidateName = computed(() => candidate.value?.nom || 'Candidate CFLB');
+const candidateCategory = computed(() => candidate.value?.categorie || 'Leadership féminin');
 const totalPrice = computed(() => voteAmount.value * PRICE_PER_VOTE);
 
-// Correction bug page blanche : on force la navigation propre
-// const goBack = () => {
-//   router.push('/candidates').then(() => {
-//     router.go(0); // Force un rafraîchissement si nécessaire
-//   });
-// };
+// 3. SEO RÉACTIF (useHead accepte des computed)
+useHead({
+  title: () => `${candidateName.value} | Conférence des Femmes Leaders du Bénin 2026`,
+  meta: [
+    { 
+      name: 'description', 
+      content: () => `${candidateName.value} (${candidateCategory.value}) - Découvrez son profil et soutenez-la.` 
+    },
+    { property: 'og:title', content: () => `${candidateName.value} | CFLB 2026` },
+    { property: 'og:description', content: () => `Soutenez ${candidateName.value} à la CFLB 2026.` },
+    { property: 'og:type', content: 'profile' },
+    { property: 'og:url', content: () => window.location.href },
+    { property: 'og:image', content: () => previewImage.value },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:image', content: () => previewImage.value },
+  ],
+  link: [
+    { rel: 'canonical', href: () => window.location.href }
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      children: computed(() => JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": candidateName.value,
+        "image": previewImage.value,
+        "url": window.location.href,
+        "description": `Candidate CFLB 2026 - ${candidateCategory.value}`
+      }))
+    }
+  ]
+});
 
+// 4. LE RESTE DE TA LOGIQUE
 const loadCandidate = async () => {
   try {
     candidate.value = await candidateService.getCandidateById(route.params.id);
   } catch (error) {
     console.error("Erreur profil:", error);
   }
+};
+
+const showNotify = (msg, type = 'success') => {
+  notification.value = { show: true, message: msg, type: type };
 };
 
 onMounted(() => {
@@ -153,7 +185,8 @@ const initiatePayment = () => {
 
 const handleKkiapaySuccess = async (response) => {
   const votesToAdd = parseInt(voteAmount.value);
-  const candidateId = candidate.value.id;
+  const candidateId = candidate.value?.id;
+  if(!candidateId) return;
 
   try {
     await candidateService.incrementVotes(candidateId, votesToAdd);
@@ -164,7 +197,7 @@ const handleKkiapaySuccess = async (response) => {
     voteAmount.value = 1; 
     showNotify(`Félicitations ! Vos ${votesToAdd} votes ont été ajoutés.`);
   } catch (error) {
-    showNotify("Erreur technique lors de la mise à jour des votes.", "error");
+    showNotify("Erreur technique lors de la mise à jour.", "error");
   }
 };
 </script>
