@@ -74,7 +74,7 @@
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
              <div class="event-image-wrapper">
-                <img src="https://i.pinimg.com/736x/74/d1/3b/74d13bc40b688bd8e0dd0f9a1d66aff1.jpg" alt="Conférence des Femmes Leaders du Bénin" class="img-fluid rounded-shadow">
+                <img :src="photo" alt="Conférence des Femmes Leaders du Bénin" class="img-fluid rounded-shadow">
              </div>
           </div>
           <div class="col-lg-6 text-center text-lg-start ps-lg-5">
@@ -173,6 +173,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import logo from '../assets/CFLB-logo-bgless.png'; 
+import photo from '../assets/conf.jpeg';
 import { useHead } from '@vueuse/head'
 
 useHead({
@@ -636,7 +637,7 @@ onMounted(() => {
 .signature-bg {
   position: absolute;
   inset: 0;
-  background-image: url('https://i.pinimg.com/736x/ac/64/a1/ac64a11f2b9d3c58839c541692f0516d.jpg'); 
+  background-image: url('https://i.pinimg.com/736x/b4/74/b2/b474b2670edd1457bc872942195d9323.jpg'); 
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

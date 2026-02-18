@@ -44,10 +44,10 @@
     <section class="section-concept container py-5">
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
-            <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=1000&auto=format&fit=crop" alt="Concept de la Conférence des Femmes Leaders du Bénin 2026" class="img-fluid reveal-img shadow-lg">
+            <img :src="photo" alt="Concept de la Conférence des Femmes Leaders du Bénin 2026" class="img-fluid reveal-img shadow-lg">
           </div>
           <div class="col-lg-6 ps-lg-5">
-            <h2 class="section-title">Une vision claire. <span class="text-gold">Un impact réel.</span></h2>
+            <h2 class="section-title">Une vision claire. <span class="text-gold" >Un impact réel.</span></h2>
             <div class="separator-gold"></div>
             <p class="text-body">
               La Conférence des Femmes Leaders du Bénin existe pour révéler, connecter et propulser les femmes leaders d’aujourd’hui et de demain.
@@ -88,10 +88,10 @@
       <section class="section-public container py-5">
         <div class="row align-items-center flex-row-reverse">
           <div class="col-lg-6 mb-4 mb-lg-0">
-            <img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?q=80&w=1000&auto=format&fit=crop" alt="Public Cible" class="img-fluid reveal-img shadow-lg">
+            <img src="https://i.pinimg.com/736x/c8/63/f7/c863f7ba82b9c55a6a8972b71657fc35.jpg" alt="Public Cible" class="img-fluid reveal-img shadow-lg">
           </div>
           <div class="col-lg-6 pe-lg-5">
-            <h2 class="section-title">À qui s’adresse cette conférence ?</h2>
+            <h2 class="section-title" style="" >À qui s’adresse cette conférence ?</h2>
             <div class="separator-red"></div>
             <ul class="clean-list">
               <li><i class="bi bi-check2-circle"></i> Femmes leaders et entrepreneures ambitieuses</li>
@@ -174,7 +174,7 @@
       <section class="section-orga container py-5">
         <div class="row align-items-center">
           <div class="col-md-5">
-             <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop" alt="Comité Organisation" class="img-fluid rounded shadow">
+             <img src="https://i.pinimg.com/1200x/50/97/0f/50970f20f51fa989a526ae9bda22731a.jpg" alt="Comité Organisation" class="img-fluid rounded shadow">
           </div>
           <div class="col-md-7 ps-md-5 mt-4 mt-md-0">
             <h2 class="section-title">Une organisation engagée</h2>
@@ -224,6 +224,7 @@
   import { useRouter } from 'vue-router';
   import Footer from '../components/Footer.vue';
   import { useHead } from '@vueuse/head'
+  import photo from '../assets/conf.jpeg';
 
  
 
