@@ -69,12 +69,13 @@ const initiatePayment = () => {
   loading.value = true;
 
   window.openKkiapayWidget({
-    amount: 2944,
+    amount: 2,
     position: "center",
     callback: "",
     data: { buyerName: form.nom },
-    key: "28970c60ec7211f0831cdb9efbf9fe95", // Ta clé sandbox
-    sandbox: true
+    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", //  clé reel
+    //key: "28970c60ec7211f0831cdb9efbf9fe95", //  clé sandbox
+     sandbox: false
   });
 
   // On remet loading à false après un délai au cas où l'utilisateur ferme le widget
