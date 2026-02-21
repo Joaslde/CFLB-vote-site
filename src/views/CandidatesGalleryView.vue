@@ -1,4 +1,5 @@
 <template>
+  <CountdownBanner />
   <div class="complet mt-5">
     <div class="page-container">
       
@@ -97,6 +98,7 @@ import { useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
 import FloatingSearch from '../components/FloatingSearch.vue';
 import Footer from '../components/Footer.vue';
+import CountdownBanner from '../components/CountdownBanner.vue';
 
 const router = useRouter();
 const candidates = ref([]);
