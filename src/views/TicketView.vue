@@ -49,100 +49,125 @@ import logo from '../assets/CFLB-logo-bgless.png';
 
 const router = useRouter();
 const loading = ref(false);
-const form = reactive({
-  nom: ''
-});
+const hasExistingTicket = ref(false);
+const form = reactive({ nom: '' });
 
-// 1. Initialisation du paiement
-const initiatePayment = () => {
+// ─── 1. INITIER LE PAIEMENT ───────────────────────────────────────────────────
+const initiatePayment = async () => {
   if (!form.nom || form.nom.length < 3) {
     alert("Veuillez entrer votre nom complet.");
     return;
   }
 
-  // Sécurité : Vérifier si le script Kkiapay est chargé dans index.html
   if (typeof window.openKkiapayWidget !== 'function') {
-    alert("Le module de paiement n'est pas encore chargé. Veuillez patienter ou rafraîchir la page.");
+    alert("Le module de paiement n'est pas encore chargé. Veuillez rafraîchir la page.");
     return;
   }
 
   loading.value = true;
 
+  // Générer le code ticket et le ref temporaire AVANT le paiement
+  const ticketCode = ticketService.generateUniqueCode(form.nom);
+  const transactionRef = `tmp_ticket_${Date.now()}`;
+
+  // Sauvegarder en DB en "pending" AVANT d'ouvrir le widget
+  try {
+    await ticketService.createPendingPayment({
+      transactionRef,
+      nomComplet: form.nom,
+      ticketCode,
+      amount: 2955
+    });
+  } catch (e) {
+    console.error("Erreur création pending:", e);
+    // On continue quand même — le ticket sera créé au success
+  }
+
+  // Stocker dans localStorage pour retrouver dans le callback
+  localStorage.setItem('current_ticket_ref', transactionRef);
+  localStorage.setItem('current_ticket_code', ticketCode);
+  localStorage.setItem('current_buyer_name', form.nom);
+
   window.openKkiapayWidget({
     amount: 2955,
     position: "center",
     callback: "",
-    data: { buyerName: form.nom },
-    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", //  clé reel
-    //key: "28970c60ec7211f0831cdb9efbf9fe95", //  clé sandbox
-     sandbox: false
+    data: { buyerName: form.nom, ticketCode },
+    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", // clé réelle
+    // key: "28970c60ec7211f0831cdb9efbf9fe95", // clé sandbox
+    sandbox: false
   });
 
-  // On remet loading à false après un délai au cas où l'utilisateur ferme le widget
-  setTimeout(() => { loading.value = false; }, 3000);
+  // Remet loading à false si l'user ferme le widget sans payer
+  setTimeout(() => { loading.value = false; }, 4000);
 };
 
-// 2. Gestion du succès (Appelé par le listener)
+// ─── 2. SUCCÈS KKIAPAY ───────────────────────────────────────────────────────
 const handleKkiapaySuccess = async (response) => {
+  loading.value = true;
+
+  const kkiapayTransactionId = response?.transactionId;
+  const transactionRef = localStorage.getItem('current_ticket_ref');
+  const ticketCode = localStorage.getItem('current_ticket_code');
+  const buyerName = localStorage.getItem('current_buyer_name') || form.nom;
+
+  // Anti-double traitement
+  const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
+  if (alreadyDone) {
+    loading.value = false;
+    return;
+  }
+
   try {
-    loading.value = true;
+    // 1. Sauvegarder le ticket en DB
+    await ticketService.saveTicketToSupabase(buyerName, ticketCode);
 
-    // 1. Génération du code
-    const ticketCode = ticketService.generateUniqueCode(form.nom);
+    // 2. Résoudre le pending → done
+    if (transactionRef) {
+      await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
+    }
 
-    // 2. Sauvegarde locale (immédiate)
-    ticketService.saveToLocalStorage(ticketCode);
+    // 3. Sauvegarder localement pour la page merci
     localStorage.setItem('event_ticket_code', ticketCode);
-    localStorage.setItem('event_buyer_name', form.nom);
+    localStorage.setItem('event_buyer_name', buyerName);
+    hasExistingTicket.value = true;
 
-    // 3. Sauvegarde Supabase (sans select)
-    await ticketService.saveTicketToSupabase(form.nom, ticketCode);
+    // Nettoyer les clés temporaires
+    localStorage.removeItem('current_ticket_ref');
+    localStorage.removeItem('current_ticket_code');
+    localStorage.removeItem('current_buyer_name');
 
-    // 4. Encodage sécurisé du nom (gère les accents)
-    const encodedName = btoa(unescape(encodeURIComponent(form.nom)));
-
-    // 5. Redirection
-    // On utilise un try/catch spécifique pour la redirection au cas où la page n'existe pas
+    // 4. Redirection vers la page merci
+    const encodedName = btoa(unescape(encodeURIComponent(buyerName)));
     try {
       await router.push({
         name: 'merci-ticket',
-        query: {
-          buyer: encodedName,
-          ref: response.transactionId
-        }
+        query: { buyer: encodedName, ref: kkiapayTransactionId }
       });
     } catch (routeError) {
-      console.warn("La page merci n'est pas encore prête, mais le ticket est enregistré !");
-      alert(`Merci ${form.nom} ! Votre paiement est validé. Votre code ticket est : ${ticketCode}`);
+      alert(`Merci ${buyerName} ! Votre paiement est validé. Code ticket : ${ticketCode}`);
     }
 
   } catch (error) {
-    // Si on arrive ici, c'est que la sauvegarde a VRAIMENT échoué avant la redirection
-    console.error("Erreur critique:", error);
-    alert("Petit souci technique, mais pas d'inquiétude : si vous avez été débité, votre ticket est en cours de validation.");
+    // Marquer le pending comme failed pour audit manuel
+    if (transactionRef) await ticketService.failPendingPayment(transactionRef);
+    console.error("TICKET_FAIL", { kkiapayTransactionId, ticketCode, buyerName });
+    alert("Paiement reçu mais erreur technique. Contactez le support avec votre reçu.");
   } finally {
     loading.value = false;
   }
 };
-// 3. Listeners
+
+// ─── 3. LIFECYCLE — UN SEUL onMounted ────────────────────────────────────────
 onMounted(() => {
   window.addKkiapayListener('success', handleKkiapaySuccess);
+  hasExistingTicket.value = !!localStorage.getItem('event_ticket_code');
 });
 
 onUnmounted(() => {
   window.removeKkiapayListener('success', handleKkiapaySuccess);
 });
-
-const hasExistingTicket = ref(false);
-
-onMounted(() => {
-  window.addKkiapayListener('success', handleKkiapaySuccess);
-  // Vérifie si un ticket est déjà en mémoire
-  hasExistingTicket.value = !!localStorage.getItem('event_ticket_code');
-});
 </script>
-
-
 
 
 
