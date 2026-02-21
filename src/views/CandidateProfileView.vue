@@ -96,6 +96,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { candidateService } from '../services/candidateService';
+import { ticketService } from '../services/ticketService'; // ← MANQUAIT ÇA
 import logo from '../assets/CFLB-logo-bgless.png';
 import { useHead } from '@vueuse/head';
 
@@ -170,36 +171,97 @@ onUnmounted(() => {
   window.removeKkiapayListener('success', handleKkiapaySuccess);
 });
 
-const initiatePayment = () => {
+// Dans initiatePayment()
+const initiatePayment = async () => {
   if (!candidate.value) return;
+
+  // Générer un ref temporaire unique
+  const transactionRef = `tmp_${candidate.value.id}_${Date.now()}`;
+  
+  // Sauvegarder le pending AVANT d'ouvrir le widget
+  await ticketService.createPendingPayment({
+    transactionRef,
+    candidateId: candidate.value.id,
+    voteCount: voteAmount.value,
+    amount: totalPrice.value
+  });
+
+  // Stocker le ref en localStorage pour le retrouver dans le callback
+  localStorage.setItem('current_payment_ref', transactionRef);
+
   window.openKkiapayWidget({
     amount: totalPrice.value,
     position: "right",
-    callback: "",
     data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
-    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", //  clé reel
-    //key: "28970c60ec7211f0831cdb9efbf9fe95", //  clé sandbox
-     sandbox: false
+    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34",
+    sandbox: false
   });
 };
 
+// Dans handleKkiapaySuccess()
 const handleKkiapaySuccess = async (response) => {
-  const votesToAdd = parseInt(voteAmount.value);
+  const kkiapayTransactionId = response?.transactionId;
+  const transactionRef = localStorage.getItem('current_payment_ref');
+
+  // Anti-double traitement
+  const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
+  if (alreadyDone) return;
+
   const candidateId = candidate.value?.id;
-  if(!candidateId) return;
+  const votesToAdd = parseInt(voteAmount.value);
 
   try {
+    // 1. Incrémenter les votes
     await candidateService.incrementVotes(candidateId, votesToAdd);
-    if (candidate.value) {
-      candidate.value.votes_count = (candidate.value.votes_count || 0) + votesToAdd;
-    }
+    
+    // 2. Mettre à jour le pending → done
+    await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
+
+    // 3. Update UI
+    if (candidate.value) candidate.value.votes_count += votesToAdd;
+    localStorage.removeItem('current_payment_ref');
     showVoteModal.value = false;
-    voteAmount.value = 1; 
-    showNotify(`Félicitations ! Vos ${votesToAdd} votes ont été ajoutés.`);
+    voteAmount.value = 1;
+    showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
+
   } catch (error) {
-    showNotify("Erreur technique lors de la mise à jour.", "error");
+    // Le transactionId est sauvé en DB → tu peux récupérer manuellement
+    await ticketService.failPendingPayment(transactionRef);
+    console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
+    showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
   }
 };
+
+// const initiatePayment = () => {
+//   if (!candidate.value) return;
+//   window.openKkiapayWidget({
+//     amount: totalPrice.value,
+//     position: "right",
+//     callback: "",
+//     data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
+//     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", //  clé reel
+//     //key: "28970c60ec7211f0831cdb9efbf9fe95", //  clé sandbox
+//      sandbox: false
+//   });
+// };
+
+// const handleKkiapaySuccess = async (response) => {
+//   const votesToAdd = parseInt(voteAmount.value);
+//   const candidateId = candidate.value?.id;
+//   if(!candidateId) return;
+
+//   try {
+//     await candidateService.incrementVotes(candidateId, votesToAdd);
+//     if (candidate.value) {
+//       candidate.value.votes_count = (candidate.value.votes_count || 0) + votesToAdd;
+//     }
+//     showVoteModal.value = false;
+//     voteAmount.value = 1; 
+//     showNotify(`Félicitations ! Vos ${votesToAdd} votes ont été ajoutés.`);
+//   } catch (error) {
+//     showNotify("Erreur technique lors de la mise à jour.", "error");
+//   }
+// };
 </script>
 
 <style scoped>
