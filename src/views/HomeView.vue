@@ -931,7 +931,7 @@ onMounted(() => {
 
 .dev-signature a {
   color: rgba(255, 255, 255, 0.5);
-  text-decoration: none;
+
   font-weight: 600;
   transition: color 0.3s ease;
 }
