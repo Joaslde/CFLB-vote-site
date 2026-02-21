@@ -106,7 +106,7 @@ const router = useRouter();
 const candidate = ref(null);
 const showVoteModal = ref(false);
 const voteAmount = ref(1);
-const PRICE_PER_VOTE = 100;
+const PRICE_PER_VOTE = 1;
 const notification = ref({ show: false, message: '', type: 'success' });
 //exemple
 // 2. DÉCLARER LES COMPUTED APRÈS LE CANDIDAT
@@ -207,10 +207,18 @@ const handleKkiapaySuccess = async (response) => {
   const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
   if (alreadyDone) return;
 
-  const candidateId = candidate.value?.id;
-  const votesToAdd = parseInt(voteAmount.value);
 
-  try {
+const candidateId = candidate.value?.id;
+const votesToAdd = parseInt(voteAmount.value);
+
+// ENSUITE le guard
+if (!candidateId || isNaN(votesToAdd) || votesToAdd < 1) {
+  console.error('VOTE_FAIL - refs perdues', { candidateId, votesToAdd });
+  showNotify("Erreur technique. Contactez le support.", "error");
+  return;
+}  
+
+try {
     // 1. Incrémenter les votes
     await candidateService.incrementVotes(candidateId, votesToAdd);
 
