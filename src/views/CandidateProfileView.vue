@@ -198,10 +198,12 @@ const initiatePayment = async () => {
   });
 };
 
+// Dans handleKkiapaySuccess()
 const handleKkiapaySuccess = async (response) => {
   const kkiapayTransactionId = response?.transactionId;
   const transactionRef = localStorage.getItem('current_payment_ref');
 
+  // Anti-double traitement
   const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
   if (alreadyDone) return;
 
@@ -209,36 +211,26 @@ const handleKkiapaySuccess = async (response) => {
   const votesToAdd = parseInt(voteAmount.value);
 
   try {
+    // 1. Incrémenter les votes
     await candidateService.incrementVotes(candidateId, votesToAdd);
 
-    if (transactionRef) {
-      // Cas normal — pending existe → on resolve
-      await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
-    } else {
-      // Cas rare — pending jamais créé → on crée directement en "done"
-      await ticketService.createPendingPayment({
-        transactionRef: kkiapayTransactionId, // vrai ID direct
-        candidateId,
-        voteCount: votesToAdd,
-        amount: votesToAdd * 100,
-        status: 'done' // ← directement done
-      });
-      // Puis on le passe done immédiatement
-      await ticketService.resolvePendingPayment(kkiapayTransactionId, kkiapayTransactionId);
-    }
+    // 2. Mettre à jour le pending → done
+    await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
 
-    // UI update...
+    // 3. Update UI
     if (candidate.value) candidate.value.votes_count += votesToAdd;
     localStorage.removeItem('current_payment_ref');
     showVoteModal.value = false;
     voteAmount.value = 1;
-    showNotify(`✅ Vos ${votesToAdd} votes ont été ajoutés !`);
+    showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
 
   } catch (error) {
-  if (transactionRef) await ticketService.failPendingPayment(transactionRef);
-  console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
-  showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
-}
+    // Le transactionId est sauvé en DB → tu peux récupérer manuellement
+    await ticketService.failPendingPayment(transactionRef);
+    console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
+    showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
+  }
+};
 
 // const initiatePayment = () => {
 //   if (!candidate.value) return;
