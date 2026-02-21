@@ -178,8 +178,9 @@ const initiatePayment = () => {
     position: "right",
     callback: "",
     data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
-    key: "28970c60ec7211f0831cdb9efbf9fe95",
-    sandbox: true 
+    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", //  clé reel
+    //key: "28970c60ec7211f0831cdb9efbf9fe95", //  clé sandbox
+     sandbox: false
   });
 };
 

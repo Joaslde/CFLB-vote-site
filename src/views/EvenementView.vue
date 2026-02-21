@@ -41,6 +41,7 @@
         </div>
       </div>
     </section>
+
     <section class="section-concept container py-5">
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
@@ -207,6 +208,72 @@
         </div>
       </section>
   
+      <section class="section-soutiens py-5">
+      <div class="container">
+        
+        <div class="text-center mb-5">
+          <h2 class="section-title">Nos Soutiens & Partenaires</h2>
+          <div class="separator-gold mx-auto"></div>
+          <p class="text-muted">Des institutions et des personnalités qui portent notre vision.</p>
+        </div>
+
+        <div class="row g-4 mb-5 justify-content-center fade-in-up">
+          <div class="col-md-6 mb-4 mb-md-0">
+            <h3 class="role-title text-center mb-3">Partenaires</h3>
+            <div class="partner-card">
+              <img src="../assets/partenaires.jpeg" alt="Nos Partenaires" class="img-fluid">
+            </div>
+            <p class="partner-caption text-center mt-3">
+              Des alliances stratégiques fortes, unies par une vision commune de l'excellence et du développement.
+            </p>
+          </div>
+          
+          <div class="col-md-6">
+            <h3 class="role-title text-center mb-3">Sponsor Officiel</h3>
+            <div class="partner-card">
+              <img src="../assets/sponsor-officiel.jpeg" alt="TriBR - Sponsor Officiel" class="img-fluid">
+            </div>
+            <p class="partner-caption text-center mt-3">
+              <strong>TriBR</strong>, fier partenaire et sponsor officiel, engagé à propulser l'innovation et le leadership féminin vers de nouveaux sommets.
+            </p>
+          </div>
+        </div>
+
+        <div class="row align-items-center mb-5 mt-5">
+          <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+            <div class="vip-img-wrapper">
+              <img src="../assets/marraine.jpeg" alt="Claudia AHO - Marraine" class="img-fluid vip-img">
+            </div>
+          </div>
+          <div class="col-lg-7 ps-lg-5">
+            <h3 class="role-title text-gold">Marraine Officielle</h3>
+            <h4 class="person-name">Claudia AHO</h4>
+            <div class="separator-gold"></div>
+            <p class="person-desc">
+              La Conférence des Femmes Leaders du Bénin a l’immense honneur de présenter sa Marraine officielle, <strong>CLAUDIA AHO</strong>. À la tête de <em>La Taverne Chez Claudia</em>, fondatrice du <em>Réseaux Curves</em> et PDG du <em>Groupe Himalaya</em>, elle incarne le leadership dans toute sa dimension.
+            </p>
+            <p class="person-desc">
+              Bien plus qu’une entrepreneure accomplie, elle est une femme de foi et une bâtisseuse de destinée. Son parcours exceptionnel témoigne qu'une femme alignée avec sa vision et engagée dans sa mission devient une force inarrêtable. Elle n'est pas seulement une dirigeante, mais une véritable source d'inspiration pour notre génération.
+            </p>
+          </div>
+        </div>
+
+        <div class="row align-items-center flex-row-reverse mt-5">
+          <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+            <div class="vip-img-wrapper">
+              <img src="../assets/parrain.jpeg" alt="Parrain de l'événement" class="img-fluid vip-img">
+            </div>
+          </div>
+          <div class="col-lg-7 pe-lg-5 text-lg-end text-center">
+            <h3 class="role-title text-gold">Parrain Officiel</h3>
+            <h4 class="person-name">Notre Parrain</h4> 
+            <div class="separator-gold ms-auto me-auto me-lg-0"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
       <section class="section-contact text-center py-4" id="contact" >
         <div class="container">
           <p class="mb-2 text-muted">Pour toute information complémentaire, contactez-nous directement.</p>
@@ -730,6 +797,187 @@ useHead({
   }
   
   .btn-ticket:hover { background: #333; transform: scale(1.05); }
+
+
+/* ==========================================
+   SECTION SOUTIENS & PARTENAIRES
+   ========================================== */
+   .section-soutiens {
+  background: #FAFAFA; /* Un gris très très clair pour contraster avec les autres sections blanches */
+  border-top: 1px solid #eee;
+}
+
+.role-title {
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #888;
+}
+
+.person-name {
+  font-family: 'Lobster', cursive;
+  font-size: 2.8rem;
+  color: #0E0E0E;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.person-desc {
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.8;
+  color: #555;
+  font-size: 1.05rem;
+  text-align: justify;
+}
+
+/* --- Légende sous les partenaires --- */
+.partner-caption {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  padding: 0 15px;
+}
+.partner-caption strong {
+  color: #0E0E0E;
+  font-weight: 700;
+}
+
+/* --- Cartes Partenaires / Sponsors (PC par défaut) --- */
+.partner-card {
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+  padding: 30px;
+  height: 250px; /* Un peu plus grand de base */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.partner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.partner-card img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* --- AJUSTEMENTS MOBILE --- */
+@media (max-width: 991px) {
+  .person-desc {
+    text-align: center;
+    text-align-last: center; 
+  }
+  
+  .vip-img-wrapper::before {
+    display: none; 
+  }
+  
+  .vip-img {
+    top: 0;
+    left: 0;
+    max-height: 350px;
+    width: 100%; /* S'assure que la photo prend bien l'écran sur mobile */
+  }
+  
+  .person-name {
+    font-size: 2.3rem;
+  }
+  
+  /* C'est ici qu'on force les cartes partenaires à être grandes sur mobile */
+  .partner-card {
+    height: auto; /* Permet de s'adapter au logo */
+    min-height: 220px; /* Maintient une belle zone blanche */
+    padding: 15px; /* On réduit le padding interne pour laisser la place à l'image */
+  }
+
+  .partner-card img {
+    width: 90%; /* Force le logo à prendre la largeur de la carte */
+    max-height: 200px; /* Évite que ça ne devienne trop étiré verticalement */
+  }
+
+  .partner-caption {
+    font-size: 0.9rem;
+    margin-bottom: 20px; /* Espace avant de passer au bloc suivant */
+  }
+} 
+
+/* --- Effet Luxe sur les photos VIP --- */
+.vip-img-wrapper {
+  position: relative;
+  display: inline-block;
+  padding: 15px;
+}
+
+/* Le fameux cadre doré décalé à l'arrière-plan */
+.vip-img-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 20px;
+  bottom: 20px;
+  border: 3px solid #D4AF37;
+  border-radius: 20px;
+  z-index: 1;
+}
+
+.vip-img {
+  position: relative;
+  z-index: 2;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  top: 20px;
+  left: 20px;
+  max-height: 400px;
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.vip-img-wrapper:hover .vip-img {
+  transform: scale(1.02);
+}
+
+/* --- AJUSTEMENTS MOBILE --- */
+@media (max-width: 991px) {
+  .person-desc {
+    text-align: center;
+    text-align-last: center; /* Améliore le rendu justifié sur mobile */
+  }
+  
+  .vip-img-wrapper::before {
+    display: none; /* On désactive le cadre décalé sur mobile pour gagner de la place */
+  }
+  
+  .vip-img {
+    top: 0;
+    left: 0;
+    max-height: 350px;
+  }
+  
+  .person-name {
+    font-size: 2.3rem;
+  }
+  
+  .partner-card {
+    height: 180px;
+  }
+}
+
+
+
+
+
   
   /* Animation Pulse pour le bouton achat */
   .pulse-btn { animation: pulse 2s infinite; }

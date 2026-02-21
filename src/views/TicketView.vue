@@ -69,7 +69,7 @@ const initiatePayment = () => {
   loading.value = true;
 
   window.openKkiapayWidget({
-    amount: 2943,
+    amount: 2955,
     position: "center",
     callback: "",
     data: { buyerName: form.nom },
