@@ -1,6 +1,6 @@
 <template>
   <div class="profile-page-wrapper">
-    
+
     <div class="profile-page" v-if="candidate">
       <button class="back-button" @click="router.push('/candidates')">
         <i class="bi bi-chevron-left"></i>
@@ -50,7 +50,7 @@
             <div class="modal-body-custom">
               <div class="input-group-custom">
                 <label>Nombre de votes souhaité</label>
-                <input type="number" v-model="voteAmount" min="1" class="vote-input" />
+                <input type="number" v-model="voteAmount" min="1" max="100" class="vote-input" />
               </div>
 
               <div class="input-group-custom mt-4">
@@ -108,7 +108,7 @@ const showVoteModal = ref(false);
 const voteAmount = ref(1);
 const PRICE_PER_VOTE = 100;
 const notification = ref({ show: false, message: '', type: 'success' });
-
+//exemple
 // 2. DÉCLARER LES COMPUTED APRÈS LE CANDIDAT
 const previewImage = computed(() => candidate.value?.photo || 'https://cflb.fr/preview-home.jpg');
 const candidateName = computed(() => candidate.value?.nom || 'Candidate CFLB');
@@ -119,9 +119,9 @@ const totalPrice = computed(() => voteAmount.value * PRICE_PER_VOTE);
 useHead({
   title: () => `${candidateName.value} | Conférence des Femmes Leaders du Bénin 2026`,
   meta: [
-    { 
-      name: 'description', 
-      content: () => `${candidateName.value} (${candidateCategory.value}) - Découvrez son profil et soutenez-la.` 
+    {
+      name: 'description',
+      content: () => `${candidateName.value} (${candidateCategory.value}) - Découvrez son profil et soutenez-la.`
     },
     { property: 'og:title', content: () => `${candidateName.value} | CFLB 2026` },
     { property: 'og:description', content: () => `Soutenez ${candidateName.value} à la CFLB 2026.` },
@@ -177,7 +177,7 @@ const initiatePayment = async () => {
 
   // Générer un ref temporaire unique
   const transactionRef = `tmp_${candidate.value.id}_${Date.now()}`;
-  
+
   // Sauvegarder le pending AVANT d'ouvrir le widget
   await ticketService.createPendingPayment({
     transactionRef,
@@ -198,12 +198,10 @@ const initiatePayment = async () => {
   });
 };
 
-// Dans handleKkiapaySuccess()
 const handleKkiapaySuccess = async (response) => {
   const kkiapayTransactionId = response?.transactionId;
   const transactionRef = localStorage.getItem('current_payment_ref');
 
-  // Anti-double traitement
   const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
   if (alreadyDone) return;
 
@@ -211,26 +209,36 @@ const handleKkiapaySuccess = async (response) => {
   const votesToAdd = parseInt(voteAmount.value);
 
   try {
-    // 1. Incrémenter les votes
     await candidateService.incrementVotes(candidateId, votesToAdd);
-    
-    // 2. Mettre à jour le pending → done
-    await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
 
-    // 3. Update UI
+    if (transactionRef) {
+      // Cas normal — pending existe → on resolve
+      await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
+    } else {
+      // Cas rare — pending jamais créé → on crée directement en "done"
+      await ticketService.createPendingPayment({
+        transactionRef: kkiapayTransactionId, // vrai ID direct
+        candidateId,
+        voteCount: votesToAdd,
+        amount: votesToAdd * 100,
+        status: 'done' // ← directement done
+      });
+      // Puis on le passe done immédiatement
+      await ticketService.resolvePendingPayment(kkiapayTransactionId, kkiapayTransactionId);
+    }
+
+    // UI update...
     if (candidate.value) candidate.value.votes_count += votesToAdd;
     localStorage.removeItem('current_payment_ref');
     showVoteModal.value = false;
     voteAmount.value = 1;
-    showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
+    showNotify(`✅ Vos ${votesToAdd} votes ont été ajoutés !`);
 
   } catch (error) {
-    // Le transactionId est sauvé en DB → tu peux récupérer manuellement
-    await ticketService.failPendingPayment(transactionRef);
-    console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
-    showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
-  }
-};
+  if (transactionRef) await ticketService.failPendingPayment(transactionRef);
+  console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
+  showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
+}
 
 // const initiatePayment = () => {
 //   if (!candidate.value) return;
@@ -265,486 +273,499 @@ const handleKkiapaySuccess = async (response) => {
 </script>
 
 <style scoped>
-    .profile-page {
-      position: relative;
-      min-height: 100vh;
-      width: 100%;
-      background-color: #000;
-      color: white;
-    }
-    
-    /* Background Image - Mobile: plein écran */
-    .hero-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background-size: cover;
-      background-position: center;
-      z-index: 1;
-    }
-    
-    .hero-overlay {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, transparent 70%);
-      z-index: 2;
-    }
-    
-    /* Desktop: Image à taille normale */
-    @media (min-width: 780px) {
-      .profile-page {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 20px;
-        min-height: 100vh;
-      }
-      
-      .hero-background {
-        left:32%;    
-        position: absolute;
-        width: 510px;
-        height: max-width;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      }
-      
-      .hero-overlay {
-        display: none; /* Pas besoin d'overlay sur desktop */
-      }
-    }
-    
-    /* Bouton Retour - Mobile: position fixe */
-    .back-button {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    
-    /* Desktop: Bouton retour position relative */
-    @media (min-width: 780px) {
-      .back-button {
-        position: absolute;
-        width: 44px;
-        height: 45px;
-        font-size: 1.2rem;
-        top: 21px;
-        left: 228px;
-        margin-top: 42px;
-        margin-bottom: 7px;
-        margin-left: 9px;
-      }
-    }
-    
-    /* Info Card (Style Glassmorphism) - Mobile: position absolue */
-    .info-card-container {
-      position: fixed;
-      bottom: 20px;
-      left: 0;
-      width: 100%;
-      padding: 0 20px;
-      z-index: 5;
-      display: flex;
-      justify-content: center;
-    }
+.profile-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #000;
+  color: white;
+}
 
-    /* Masquer la version desktop sur mobile */
-    .info-card-container-desktop,
-    .info-card-desktop {
-      display: none;
-    }
+/* Background Image - Mobile: plein écran */
+.hero-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
 
-    /* Masquer la version mobile sur desktop */
-    @media (min-width: 780px) {
-      .info-card-container-mobile,
-      .info-card-mobile {
-        display: none;
-      }
+.hero-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 20%, transparent 70%);
+  z-index: 2;
+}
 
-      .info-card-container-desktop {
-        display: block;
-        position: relative;
-        bottom: auto;
-        width: auto;
-        padding: 0;
-      }
-
-      .info-card-desktop {
-        display: block;
-      }
-    }
-    
-    .info-card,
-    .info-card-desktop {
-      background: rgba(20, 20, 20, 0.6);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 25px;
-      padding: 20px;
-      max-width: 13rem; /* 208px - même largeur mobile et desktop */
-      width: 100%;
-      margin: 0 auto;
-    }
-    
-    .candidate-hashtag {
-      color: #eea810;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    
-    .candidate-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin: 4px 0;
-      line-height: 1.2;
-    }
-    
-    .candidate-category {
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: uppercase;
-      font-size: 0.65rem;
-      letter-spacing: 1px;
-    }
-    
-    /* Logo de l'événement */
-    .event-logo-circle {
-      width: 45px;
-      height: 45px;
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-      flex-shrink: 0;
-    }
-    
-    .event-logo-circle img {
-      width: 100%;
-      height: auto;
-    }
-    
-    /* Stats */
-    .stats-row {
-      gap: 1rem;
-    }
-    
-    @media (min-width: 780px) {
-      .stats-row {
-        gap: 1.5rem;
-      }
-    }
-    
-    .stat-value {
-      display: block;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    
-    .stat-label {
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.5);
-      text-transform: uppercase;
-    }
-    
-    /* Bouton Vote */
-    .btn-vote {
-      width: 100%;
-      background: linear-gradient(135deg, #cfaa2e, #eea810);
-      border: none;
-      color: #000;
-      padding: 12px;
-      border-radius: 15px;
-      font-weight: 800;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-      transition: transform 0.3s ease;
-     
-    
-    }
-
-    .btn-vote:hover {
-      transform: scale(1.04);
-      box-shadow: 0 12px 32px rgba(212, 175, 55, 0.45);
-      filter: brightness(1.11);
-    }
-
-    /* Responsive Mobile - Réduction légère de la taille */
-    
-
-    @media (max-width: 779px) {
-      .info-card-container {
-        padding: 0 16px;
-        bottom: 16px;
-        height:14.5rem;
-      }
-
-      .info-card {
-        max-width: 15.5rem; /* 184px - réduit de 208px */
-        padding: 16px;
-        border-radius: 20px;
-      }
-
-      .card-header {
-        margin-bottom: 12px;
-      }
-
-      .candidate-hashtag {
-        font-size: .65rem;
-      }
-
-      .candidate-name {
-        font-size: 1.22rem;
-        margin: 3px 0;
-
-      }
-
-      .candidate-category {
-          margin-top:10px;
-        font-size: 0.6rem;
-        margin-bottom:-.7rem;
-
-      }
-
-      .event-logo-circle {
-        width: 40px;
-        height: 40px;
-        padding: 3px;
-        margin-top:2.2rem;
-      
-
-      }
-
-      .stats-row {
-        gap: 0.75rem;
-        margin-top: 12px;
-        margin-bottom: 12px;
-      }
-
-      .stat-value {
-        font-size: 0.9rem;
-      }
-
-      .stat-label {
-        font-size: 0.6rem;
-      }
-
-      .btn-vote {
-        padding: 10px;
-        font-size: 0.7rem;
-        border-radius: 12px;
-      }
-    }
-
-    /* Responsive Desktop - modifications spécifiques */
-    @media (min-width: 780px) {
-      .info-card-desktop {
-        max-width: 248px;
-        width: 248px;
-        height: 275px;
-        padding-top: 29px;
-        padding-bottom: 37px;
-        padding-left: 25px;
-        padding-right: 25px;
-        border-radius: 30px;
-        margin-top: -311px;
-        margin-bottom: 1px;
-        z-index: 5;
-      }
-      
-      .card-header {
-        margin-top: -6px;
-        margin-bottom: -3px;
-      }
-      
-      .candidate-hashtag {
-        font-size: 0.75rem;
-      }
-      
-      .candidate-name {
-        font-size: 1.59rem;
-      }
-      
-      .candidate-category {
-        font-size: 0.7rem;
-        margin-top: 9px;
-        margin-bottom: -4px;
-      }
-      
-      .event-logo-circle {
-        width: 52px;
-        height: 52px;
-        margin-top: 24px;
-        margin-left: -22px;
-        margin-right: -6px;
-      }
-      
-      .stats-row {
-        margin-top: 15px;
-        margin-bottom: 9px;
-      }
-      
-      .stat-value {
-        font-size: 1.1rem;
-      }
-      
-      .stat-label {
-        font-size: 0.7rem;
-      }
-      
-      .btn-vote {
-        padding: 14px;
-        font-size: 0.8rem;
-        border-radius: 18px;
-      }
-    }
-    
-    .btn-vote:active {
-      transform: scale(0.95);
-    }
-    
-    .loading-state {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
-    }
-
-
-
-
-    /* Pop up */
-
-
-  /* MODAL STYLES */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    z-index: 100;
+/* Desktop: Image à taille normale */
+@media (min-width: 780px) {
+  .profile-page {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 60px 20px;
+    min-height: 100vh;
   }
 
-  .vote-modal {
-    background: rgba(30, 30, 30, 0.9);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 30px;
-    width: 100%;
-    max-width: 400px;
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  .hero-background {
+    left: 32%;
+    position: absolute;
+    width: 510px;
+    height: max-width;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   }
 
-  .modal-header-custom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  .hero-overlay {
+    display: none;
+    /* Pas besoin d'overlay sur desktop */
   }
+}
 
-  .modal-header-custom h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    color: #FFD700; /* Doré */
-  }
+/* Bouton Retour - Mobile: position fixe */
+.back-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+}
 
-  .close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    line-height: 1;
-  }
-
-  .input-group-custom label {
-    display: block;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-  }
-
-  .vote-input, .price-display {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 15px;
-    color: white;
+/* Desktop: Bouton retour position relative */
+@media (min-width: 780px) {
+  .back-button {
+    position: absolute;
+    width: 44px;
+    height: 45px;
     font-size: 1.2rem;
-    outline: none;
+    top: 21px;
+    left: 228px;
+    margin-top: 42px;
+    margin-bottom: 7px;
+    margin-left: 9px;
+  }
+}
+
+/* Info Card (Style Glassmorphism) - Mobile: position absolue */
+.info-card-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 0 20px;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+}
+
+/* Masquer la version desktop sur mobile */
+.info-card-container-desktop,
+.info-card-desktop {
+  display: none;
+}
+
+/* Masquer la version mobile sur desktop */
+@media (min-width: 780px) {
+
+  .info-card-container-mobile,
+  .info-card-mobile {
+    display: none;
   }
 
-  .vote-input:focus {
-    border-color: #FFD700;
+  .info-card-container-desktop {
+    display: block;
+    position: relative;
+    bottom: auto;
+    width: auto;
+    padding: 0;
   }
 
-  .price-display {
-    background: rgba(212, 175, 55, 0.1);
-    color: #FFD700;
-    font-weight: bold;
+  .info-card-desktop {
+    display: block;
+  }
+}
+
+.info-card,
+.info-card-desktop {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 20px;
+  max-width: 13rem;
+  /* 208px - même largeur mobile et desktop */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.candidate-hashtag {
+  color: #eea810;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+
+.candidate-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 4px 0;
+  line-height: 1.2;
+}
+
+.candidate-category {
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+
+/* Logo de l'événement */
+.event-logo-circle {
+  width: 45px;
+  height: 45px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  flex-shrink: 0;
+}
+
+.event-logo-circle img {
+  width: 100%;
+  height: auto;
+}
+
+/* Stats */
+.stats-row {
+  gap: 1rem;
+}
+
+@media (min-width: 780px) {
+  .stats-row {
+    gap: 1.5rem;
+  }
+}
+
+.stat-value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+/* Bouton Vote */
+.btn-vote {
+  width: 100%;
+  background: linear-gradient(135deg, #cfaa2e, #eea810);
+  border: none;
+  color: #000;
+  padding: 12px;
+  border-radius: 15px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+  transition: transform 0.3s ease;
+
+
+}
+
+.btn-vote:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.45);
+  filter: brightness(1.11);
+}
+
+/* Responsive Mobile - Réduction légère de la taille */
+
+
+@media (max-width: 779px) {
+  .info-card-container {
+    padding: 0 16px;
+    bottom: 16px;
+    height: 14.5rem;
   }
 
-  .btn-pay {
-    width: 100%;
-    background: #FFD700;
-    color: black;
-    border: none;
-    padding: 15px;
-    border-radius: 15px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    transition: 0.3s;
+  .info-card {
+    max-width: 15.5rem;
+    /* 184px - réduit de 208px */
+    padding: 16px;
+    border-radius: 20px;
   }
 
-  .btn-pay:disabled {
-    opacity: 0.5;
-    filter: grayscale(1);
+  .card-header {
+    margin-bottom: 12px;
   }
 
-  /* Animations */
-  .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
-  .fade-enter-from, .fade-leave-to { opacity: 0; }
+  .candidate-hashtag {
+    font-size: .65rem;
+  }
+
+  .candidate-name {
+    font-size: 1.22rem;
+    margin: 3px 0;
+
+  }
+
+  .candidate-category {
+    margin-top: 10px;
+    font-size: 0.6rem;
+    margin-bottom: -.7rem;
+
+  }
+
+  .event-logo-circle {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+    margin-top: 2.2rem;
+
+
+  }
+
+  .stats-row {
+    gap: 0.75rem;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat-value {
+    font-size: 0.9rem;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+  }
+
+  .btn-vote {
+    padding: 10px;
+    font-size: 0.7rem;
+    border-radius: 12px;
+  }
+}
+
+/* Responsive Desktop - modifications spécifiques */
+@media (min-width: 780px) {
+  .info-card-desktop {
+    max-width: 248px;
+    width: 248px;
+    height: 275px;
+    padding-top: 29px;
+    padding-bottom: 37px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-radius: 30px;
+    margin-top: -311px;
+    margin-bottom: 1px;
+    z-index: 5;
+  }
+
+  .card-header {
+    margin-top: -6px;
+    margin-bottom: -3px;
+  }
+
+  .candidate-hashtag {
+    font-size: 0.75rem;
+  }
+
+  .candidate-name {
+    font-size: 1.59rem;
+  }
+
+  .candidate-category {
+    font-size: 0.7rem;
+    margin-top: 9px;
+    margin-bottom: -4px;
+  }
+
+  .event-logo-circle {
+    width: 52px;
+    height: 52px;
+    margin-top: 24px;
+    margin-left: -22px;
+    margin-right: -6px;
+  }
+
+  .stats-row {
+    margin-top: 15px;
+    margin-bottom: 9px;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .btn-vote {
+    padding: 14px;
+    font-size: 0.8rem;
+    border-radius: 18px;
+  }
+}
+
+.btn-vote:active {
+  transform: scale(0.95);
+}
+
+.loading-state {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+}
+
+
+
+
+/* Pop up */
+
+
+/* MODAL STYLES */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.vote-modal {
+  background: rgba(30, 30, 30, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 30px;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modal-header-custom h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #FFD700;
+  /* Doré */
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.input-group-custom label {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.vote-input,
+.price-display {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 15px;
+  color: white;
+  font-size: 1.2rem;
+  outline: none;
+}
+
+.vote-input:focus {
+  border-color: #FFD700;
+}
+
+.price-display {
+  background: rgba(212, 175, 55, 0.1);
+  color: #FFD700;
+  font-weight: bold;
+}
+
+.btn-pay {
+  width: 100%;
+  background: #FFD700;
+  color: black;
+  border: none;
+  padding: 15px;
+  border-radius: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+
+.btn-pay:disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+/* Animations */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
 
 
 
 
 
-  /* pop up apres payement */
+/* pop up apres payement */
 
-  .notification-container {
+.notification-container {
   position: fixed;
   top: 30px;
   left: 50%;
@@ -755,7 +776,7 @@ const handleKkiapaySuccess = async (response) => {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .notification-content {
@@ -766,40 +787,40 @@ const handleKkiapaySuccess = async (response) => {
   position: relative;
 }
 
+.notification-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.notification-close:hover {
+  opacity: 1;
+  color: #D4AF37;
+}
+
+/* Responsive styles for mobile screens */
+@media (max-width: 500px) {
+  .notification-container {
+    min-width: unset;
+    width: 90vw;
+    max-width: 98vw;
+    top: 15px;
+    border-radius: 14px;
+    padding: 0 4px;
+  }
+
+  .notification-content {
+    padding: 12px 8px;
+    gap: 10px;
+  }
+
   .notification-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    margin-left: auto;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: 0.3s;
+    font-size: 1.2rem;
   }
-
-  .notification-close:hover {
-    opacity: 1;
-    color: #D4AF37;
-  }
-
-  /* Responsive styles for mobile screens */
-  @media (max-width: 500px) {
-    .notification-container {
-      min-width: unset;
-      width: 90vw;
-      max-width: 98vw;
-      top: 15px;
-      border-radius: 14px;
-      padding: 0 4px;
-    }
-
-    .notification-content {
-      padding: 12px 8px;
-      gap: 10px;
-    }
-
-    .notification-close {
-      font-size: 1.2rem;
-    }
-  }
+}
 </style>
