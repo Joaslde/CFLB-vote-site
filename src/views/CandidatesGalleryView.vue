@@ -82,7 +82,7 @@
           </div>
 
           <div v-else class="text-center text-muted py-5">
-            <p>Aucune candidate dans cette catégorie pour le moment.</p>
+            <p>Vérifiez votre connexion internet</p>
           </div>
         </div>
       </div>
