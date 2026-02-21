@@ -1,97 +1,96 @@
 <template>
-  <div class="profile-page" v-if="candidate">
-    <button class="back-button" @click="router.push('/candidates')">
-      <i class="bi bi-chevron-left"></i>
-    </button>
+  <div class="profile-page-wrapper">
+    
+    <div class="profile-page" v-if="candidate">
+      <button class="back-button" @click="router.push('/candidates')">
+        <i class="bi bi-chevron-left"></i>
+      </button>
 
-    <div class="hero-background" :style="{ backgroundImage: `url(${candidate.photo})` }"></div>
-    <div class="hero-overlay"></div>
+      <div class="hero-background" :style="{ backgroundImage: `url(${candidate.photo})` }"></div>
+      <div class="hero-overlay"></div>
 
-    <div class="info-card-container">
-      <div class="info-card">
-        <div class="card-header d-flex justify-content-between align-items-start mb-3">
-          <div>
-            <span class="candidate-hashtag">#candidate{{ candidate.id }}</span>
-            <h1 class="candidate-name">{{ candidate.nom }}</h1>
-            <p class="candidate-category">{{ candidate.categorie }}</p>
-          </div>
-          <div class="event-logo-circle">
-            <img :src="logo" alt="Logo">
-          </div>
-        </div>
-
-        <div class="stats-row d-flex my-3">
-          <div class="stat-item">
-            <span class="stat-value">{{ candidate.votes_count || 0 }}</span>
-            <span class="stat-label">Votes</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">Actif</span>
-            <span class="stat-label">Statut</span>
-          </div>
-        </div>
-
-        <button class="btn-vote" @click="showVoteModal = true">
-          VOTER MAINTENANT
-        </button>
-      </div>
-    </div>
-
-    <Transition name="fade">
-      <div v-if="showVoteModal" class="modal-overlay" @click.self="showVoteModal = false">
-        <div class="vote-modal">
-          <div class="modal-header-custom">
-            <h2>Soutenir {{ candidate.nom }}</h2>
-            <button class="close-btn" @click="showVoteModal = false">&times;</button>
-          </div>
-
-          <div class="modal-body-custom">
-            <div class="input-group-custom">
-              <label>Nombre de votes souhaité</label>
-              <input 
-                type="number" 
-                v-model="voteAmount" 
-                min="1" 
-                class="vote-input"
-              />
+      <div class="info-card-container">
+        <div class="info-card">
+          <div class="card-header d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="candidate-hashtag">#candidate{{ candidate.id }}</span>
+              <h1 class="candidate-name">{{ candidate.nom_complet }}</h1>
+              <p class="candidate-category">{{ candidate.categorie }}</p>
             </div>
-
-            <div class="input-group-custom mt-4">
-              <label>Prix total (FCFA)</label>
-              <input 
-                type="text" 
-                :value="totalPrice + ' FCFA'" 
-                disabled 
-                class="price-display"
-              />
+            <div class="event-logo-circle">
+              <img :src="logo" alt="Logo">
             </div>
+          </div>
 
-            <button class="btn-pay mt-5" @click="initiatePayment" :disabled="voteAmount < 1">
-              PAYER {{ totalPrice }} FCFA
-            </button>
+          <div class="stats-row d-flex my-3">
+            <div class="stat-item">
+              <span class="stat-value">{{ candidate.votes_count || 0 }}</span>
+              <span class="stat-label">Votes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">Actif</span>
+              <span class="stat-label">Statut</span>
+            </div>
           </div>
-        </div>
-      </div>
-    </Transition>
 
-    <Transition name="slide-fade">
-      <div v-if="notification.show" class="notification-container" :class="notification.type">
-        <div class="notification-content">
-          <div class="notification-icon">
-            <i v-if="notification.type === 'success'" class="bi bi-check-circle-fill"></i>
-            <i v-else class="bi bi-exclamation-triangle-fill"></i>
-          </div>
-          <div class="notification-text">
-            {{ notification.message }}
-          </div>
-          <button class="notification-close" @click="notification.show = false">
-            <i class="bi bi-x"></i>
+          <button class="btn-vote" @click="showVoteModal = true">
+            VOTER MAINTENANT
           </button>
         </div>
       </div>
-    </Transition>
+
+      <Transition name="fade">
+        <div v-if="showVoteModal" class="modal-overlay" @click.self="showVoteModal = false">
+          <div class="vote-modal">
+            <div class="modal-header-custom">
+              <h2>Soutenir {{ candidate.nom }}</h2>
+              <button class="close-btn" @click="showVoteModal = false">&times;</button>
+            </div>
+
+            <div class="modal-body-custom">
+              <div class="input-group-custom">
+                <label>Nombre de votes souhaité</label>
+                <input type="number" v-model="voteAmount" min="1" class="vote-input" />
+              </div>
+
+              <div class="input-group-custom mt-4">
+                <label>Prix total (FCFA)</label>
+                <input type="text" :value="totalPrice + ' FCFA'" disabled class="price-display" />
+              </div>
+
+              <button class="btn-pay mt-5" @click="initiatePayment" :disabled="voteAmount < 1">
+                PAYER {{ totalPrice }} FCFA
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <Transition name="slide-fade">
+        <div v-if="notification.show" class="notification-container" :class="notification.type">
+          <div class="notification-content">
+            <div class="notification-icon">
+              <i v-if="notification.type === 'success'" class="bi bi-check-circle-fill"></i>
+              <i v-else class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="notification-text">
+              {{ notification.message }}
+            </div>
+            <button class="notification-close" @click="notification.show = false">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </div>
+
+    <div v-else class="loading-state">
+      <div class="spinner-border" style="color: #D4AF37; width: 3rem; height: 3rem;" role="status"></div>
+    </div>
+
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';

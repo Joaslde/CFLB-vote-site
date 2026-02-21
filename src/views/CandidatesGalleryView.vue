@@ -1,4 +1,5 @@
 <template>
+  <div class="gallery-view-wrapper">
   <CountdownBanner />
   <div class="complet mt-5">
     <div class="page-container">
@@ -89,6 +90,7 @@
       <FloatingSearch :candidates="candidates" @highlight="handleHighlight" />
       <Footer/>
     </div>
+  </div>
   </div>
 </template>
 
