@@ -91,7 +91,6 @@ const initiatePayment = async () => {
   window.openKkiapayWidget({
     amount: 3000,
     position: "center",
-    callback: "",
     data: { buyerName: form.nom, ticketCode },
     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", // clé réelle
     // key: "28970c60ec7211f0831cdb9efbf9fe95", // clé sandbox
