@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 
 export const ticketService = {
 
-  // ─── UTILS ───────────────────────────────────────────────────────────────
+  // ─── UTILS ────────────────────────────────────────────────────────────────
 
   generateUniqueCode(nom) {
     const prefix = "EVT25";
@@ -12,73 +12,7 @@ export const ticketService = {
     return `${prefix}-${cleanNom}-${timestamp}-${random}`;
   },
 
-  // ─── PENDING PAYMENT (avant ouverture widget) ─────────────────────────────
-
-  /**
-   * Créer un pending AVANT d'ouvrir Kkiapay
-   * Appelle ça juste avant openKkiapayWidget()
-   */
-  async createPendingPayment({ transactionRef, candidateId = null, voteCount = null, nomComplet = null, ticketCode = null, amount }) {
-    const { data, error } = await supabase
-      .from('pending_payments')
-      .insert([{
-        transaction_id: transactionRef, // ID temporaire que tu génères toi-même
-        candidate_id: candidateId,
-        vote_count: voteCount,
-        nom_complet: nomComplet,
-        ticket_code: ticketCode,
-        amount: amount,
-        status: 'pending'
-      }])
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  /**
-   * Résoudre le pending après succès Kkiapay
-   * transactionId = celui retourné par Kkiapay dans le callback success
-   * transactionRef = ton ID temporaire que tu avais généré avant
-   */
-  async resolvePendingPayment(transactionRef, kkiapayTransactionId) {
-    const { error } = await supabase
-      .from('pending_payments')
-      .update({
-        transaction_id: kkiapayTransactionId, // on remplace le ref temporaire par le vrai ID Kkiapay
-        status: 'done'
-      })
-      .eq('transaction_id', transactionRef);
-
-    if (error) throw error;
-  },
-
-  /**
-   * Marquer un pending comme failed
-   */
-  async failPendingPayment(transactionRef) {
-    await supabase
-      .from('pending_payments')
-      .update({ status: 'failed' })
-      .eq('transaction_id', transactionRef);
-  },
-
-  /**
-   * Vérifier si un transactionId Kkiapay a déjà été traité (anti-double)
-   */
-  async isTransactionAlreadyDone(kkiapayTransactionId) {
-    const { data } = await supabase
-      .from('pending_payments')
-      .select('id, status')
-      .eq('transaction_id', kkiapayTransactionId)
-      .eq('status', 'done')
-      .maybeSingle();
-
-    return !!data;
-  },
-
-  // ─── TICKETS ─────────────────────────────────────────────────────────────
+  // ─── TABLE TICKETS (ce que ScanView lit) ──────────────────────────────────
 
   async saveTicketToSupabase(nomComplet, ticketCode) {
     const { data, error } = await supabase
@@ -88,9 +22,7 @@ export const ticketService = {
         ticket_code: ticketCode,
         paiement_valide: true,
         qr_utilise: false
-      }])
-      .select()
-      .single();
+      }]);
 
     if (error) throw error;
     return data;
@@ -134,5 +66,54 @@ export const ticketService = {
     if (updateError) throw updateError;
 
     return { status: 'success', buyer: ticket.nom_complet };
+  },
+
+  // ─── TABLE PENDING_PAYMENTS (audit + anti-double) ─────────────────────────
+
+  async createPendingPayment({ transactionRef, nomComplet = null, ticketCode = null, amount }) {
+    const { data, error } = await supabase
+      .from('pending_payments')
+      .insert([{
+        transaction_id: transactionRef,
+        nom_complet: nomComplet,
+        ticket_code: ticketCode,
+        amount: amount,
+        status: 'pending'
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async resolvePendingPayment(transactionRef, kkiapayTransactionId) {
+    const { error } = await supabase
+      .from('pending_payments')
+      .update({
+        transaction_id: kkiapayTransactionId,
+        status: 'done'
+      })
+      .eq('transaction_id', transactionRef);
+
+    if (error) throw error;
+  },
+
+  async failPendingPayment(transactionRef) {
+    await supabase
+      .from('pending_payments')
+      .update({ status: 'failed' })
+      .eq('transaction_id', transactionRef);
+  },
+
+  async isTransactionAlreadyDone(kkiapayTransactionId) {
+    const { data } = await supabase
+      .from('pending_payments')
+      .select('id, status')
+      .eq('transaction_id', kkiapayTransactionId)
+      .eq('status', 'done')
+      .maybeSingle();
+
+    return !!data;
   },
 };

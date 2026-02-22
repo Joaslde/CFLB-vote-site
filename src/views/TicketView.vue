@@ -66,11 +66,11 @@ const initiatePayment = async () => {
 
   loading.value = true;
 
-  // Générer le code ticket et le ref temporaire AVANT le paiement
+  // Générer le code ticket et ref temporaire AVANT le paiement
   const ticketCode = ticketService.generateUniqueCode(form.nom);
   const transactionRef = `tmp_ticket_${Date.now()}`;
 
-  // Sauvegarder en DB en "pending" AVANT d'ouvrir le widget
+  // 1. Créer le pending dans pending_payments (audit)
   try {
     await ticketService.createPendingPayment({
       transactionRef,
@@ -80,10 +80,10 @@ const initiatePayment = async () => {
     });
   } catch (e) {
     console.error("Erreur création pending:", e);
-    // On continue quand même — le ticket sera créé au success
+    // On continue quand même
   }
 
-  // Stocker dans localStorage pour retrouver dans le callback
+  // Stocker pour retrouver dans le callback
   localStorage.setItem('current_ticket_ref', transactionRef);
   localStorage.setItem('current_ticket_code', ticketCode);
   localStorage.setItem('current_buyer_name', form.nom);
@@ -98,7 +98,6 @@ const initiatePayment = async () => {
     sandbox: false
   });
 
-  // Remet loading à false si l'user ferme le widget sans payer
   setTimeout(() => { loading.value = false; }, 4000);
 };
 
@@ -111,7 +110,7 @@ const handleKkiapaySuccess = async (response) => {
   const ticketCode = localStorage.getItem('current_ticket_code');
   const buyerName = localStorage.getItem('current_buyer_name') || form.nom;
 
-  // Anti-double traitement
+  // Anti-double — si déjà traité on sort
   const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
   if (alreadyDone) {
     loading.value = false;
@@ -119,15 +118,15 @@ const handleKkiapaySuccess = async (response) => {
   }
 
   try {
-    // 1. Sauvegarder le ticket en DB
+    // ✅ ÉTAPE 1 — Sauvegarder dans la table "tickets" (pour ScanView)
     await ticketService.saveTicketToSupabase(buyerName, ticketCode);
 
-    // 2. Résoudre le pending → done
+    // ✅ ÉTAPE 2 — Passer le pending à "done" dans pending_payments (audit)
     if (transactionRef) {
       await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
     }
 
-    // 3. Sauvegarder localement pour la page merci
+    // ✅ ÉTAPE 3 — Sauvegarder localement pour la page merci
     localStorage.setItem('event_ticket_code', ticketCode);
     localStorage.setItem('event_buyer_name', buyerName);
     hasExistingTicket.value = true;
@@ -137,7 +136,7 @@ const handleKkiapaySuccess = async (response) => {
     localStorage.removeItem('current_ticket_code');
     localStorage.removeItem('current_buyer_name');
 
-    // 4. Redirection vers la page merci
+    // ✅ ÉTAPE 4 — Redirection page merci
     const encodedName = btoa(unescape(encodeURIComponent(buyerName)));
     try {
       await router.push({
@@ -145,11 +144,11 @@ const handleKkiapaySuccess = async (response) => {
         query: { buyer: encodedName, ref: kkiapayTransactionId }
       });
     } catch (routeError) {
-      alert(`Merci ${buyerName} ! Votre paiement est validé. Code ticket : ${ticketCode}`);
+      alert(`Merci ${buyerName} ! Paiement validé. Code ticket : ${ticketCode}`);
     }
 
   } catch (error) {
-    // Marquer le pending comme failed pour audit manuel
+    // Marquer comme failed pour retrouver manuellement
     if (transactionRef) await ticketService.failPendingPayment(transactionRef);
     console.error("TICKET_FAIL", { kkiapayTransactionId, ticketCode, buyerName });
     alert("Paiement reçu mais erreur technique. Contactez le support avec votre reçu.");
@@ -158,7 +157,7 @@ const handleKkiapaySuccess = async (response) => {
   }
 };
 
-// ─── 3. LIFECYCLE — UN SEUL onMounted ────────────────────────────────────────
+// ─── 3. LIFECYCLE ─────────────────────────────────────────────────────────────
 onMounted(() => {
   window.addKkiapayListener('success', handleKkiapaySuccess);
   hasExistingTicket.value = !!localStorage.getItem('event_ticket_code');
@@ -168,7 +167,6 @@ onUnmounted(() => {
   window.removeKkiapayListener('success', handleKkiapaySuccess);
 });
 </script>
-
 
 
 
