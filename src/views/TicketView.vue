@@ -76,7 +76,7 @@ const initiatePayment = async () => {
       transactionRef,
       nomComplet: form.nom,
       ticketCode,
-      amount: 2955
+      amount: 3000
     });
   } catch (e) {
     console.error("Erreur création pending:", e);
@@ -89,7 +89,7 @@ const initiatePayment = async () => {
   localStorage.setItem('current_buyer_name', form.nom);
 
   window.openKkiapayWidget({
-    amount: 2955,
+    amount: 3000,
     position: "center",
     callback: "",
     data: { buyerName: form.nom, ticketCode },
