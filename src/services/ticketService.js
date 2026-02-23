@@ -75,6 +75,8 @@ export const ticketService = {
       .from('pending_payments')
       .insert([{
         transaction_id: transactionRef,
+        candidate_id: candidateId,   // ← ajouter
+        vote_count: voteCount,       // ← ajouter
         nom_complet: nomComplet,
         ticket_code: ticketCode,
         amount: amount,
