@@ -70,13 +70,14 @@ export const ticketService = {
 
   // ─── TABLE PENDING_PAYMENTS (audit + anti-double) ─────────────────────────
 
-  async createPendingPayment({ transactionRef, nomComplet = null, ticketCode = null, amount }) {
+
+  async createPendingPayment({ transactionRef, candidateId = null, voteCount = null, nomComplet = null, ticketCode = null, amount }) {
     const { data, error } = await supabase
       .from('pending_payments')
       .insert([{
         transaction_id: transactionRef,
-        candidate_id: candidateId,   // ← ajouter
-        vote_count: voteCount,       // ← ajouter
+        candidate_id: candidateId,
+        vote_count: voteCount,
         nom_complet: nomComplet,
         ticket_code: ticketCode,
         amount: amount,
