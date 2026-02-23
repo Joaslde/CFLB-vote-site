@@ -89,7 +89,7 @@ const initiatePayment = async () => {
   localStorage.setItem('current_buyer_name', form.nom);
 
   window.openKkiapayWidget({
-    amount: 1,
+    amount: 3000,
     position: "center",
     data: { buyerName: form.nom, ticketCode },
     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", // clé réelle
@@ -150,7 +150,7 @@ const handleKkiapaySuccess = async (response) => {
     // Marquer comme failed pour retrouver manuellement
     if (transactionRef) await ticketService.failPendingPayment(transactionRef);
     console.error("TICKET_FAIL", { kkiapayTransactionId, ticketCode, buyerName });
-    alert("Paiement reçu mais erreur technique. Contactez le support avec votre reçu.");
+    alert("Paiement reçu mais erreur technique possible. Contactez le support (+229 01 59 84 11 85) avec votre reçu pour confirmer que votre achat a été validé.");
   } finally {
     loading.value = false;
   }
