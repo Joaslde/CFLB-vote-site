@@ -89,7 +89,7 @@ const initiatePayment = async () => {
   localStorage.setItem('current_buyer_name', form.nom);
 
   window.openKkiapayWidget({
-    amount: 1,
+    amount: 3000,
     position: "center",
     data: { buyerName: form.nom, ticketCode },
     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", // clé réelle
