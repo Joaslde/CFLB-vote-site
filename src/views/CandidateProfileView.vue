@@ -150,93 +150,112 @@ useHead({
 });
 
 // 4. LE RESTE DE TA LOGIQUE
-const loadCandidate = async () => {
-  try {
-    candidate.value = await candidateService.getCandidateById(route.params.id);
-  } catch (error) {
-    console.error("Erreur profil:", error);
-  }
-};
+  const loadCandidate = async () => {
+    try {
+      candidate.value = await candidateService.getCandidateById(route.params.id);
+    } catch (error) {
+      console.error("Erreur profil:", error);
+    }
+  };
 
-const showNotify = (msg, type = 'success') => {
-  notification.value = { show: true, message: msg, type: type };
-};
+  const showNotify = (msg, type = 'success') => {
+    notification.value = { show: true, message: msg, type: type };
+  };
 
-onMounted(() => {
-  loadCandidate();
-  window.addKkiapayListener('success', handleKkiapaySuccess);
-});
-
-onUnmounted(() => {
-  window.removeKkiapayListener('success', handleKkiapaySuccess);
-});
-
-// Dans initiatePayment()
-const initiatePayment = async () => {
-  if (!candidate.value) return;
-
-  const transactionRef = `tmp_${candidate.value.id}_${Date.now()}`;
-
-  await ticketService.createPendingPayment({
-    transactionRef,
-    candidateId: candidate.value.id,
-    voteCount: voteAmount.value,
-    amount: totalPrice.value
+  onMounted(() => {
+    loadCandidate();
+    window.addKkiapayListener('success', handleKkiapaySuccess);
   });
 
-  localStorage.setItem('current_payment_ref', transactionRef);
-
-  window.openKkiapayWidget({
-    amount: totalPrice.value,
-    position: "right",
-    // label = notre transactionRef → apparaît dans stateData du webhook
-    label: transactionRef,
-    data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
-    key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34",
-    sandbox: false
+  onUnmounted(() => {
+    window.removeKkiapayListener('success', handleKkiapaySuccess);
   });
-};
-// Dans handleKkiapaySuccess()
-const handleKkiapaySuccess = async (response) => {
-  const kkiapayTransactionId = response?.transactionId;
-  const transactionRef = localStorage.getItem('current_payment_ref');
 
-  // Anti-double traitement
-  const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
-  if (alreadyDone) return;
+  // Dans initiatePayment()
+  const initiatePayment = async () => {
+    if (!candidate.value) return;
 
+    const transactionRef = `tmp_${candidate.value.id}_${Date.now()}`;
 
-const candidateId = candidate.value?.id;
-const votesToAdd = parseInt(voteAmount.value);
+    await ticketService.createPendingPayment({
+      transactionRef,
+      candidateId: candidate.value.id,
+      voteCount: voteAmount.value,
+      amount: totalPrice.value
+    });
 
-// ENSUITE le guard
-if (!candidateId || isNaN(votesToAdd) || votesToAdd < 1) {
-  console.error('VOTE_FAIL - refs perdues', { candidateId, votesToAdd });
-  showNotify("Erreur technique. Contactez le support.", "error");
-  return;
-}  
+    localStorage.setItem('current_payment_ref', transactionRef);
 
-try {
-    // 1. Incrémenter les votes
-    await candidateService.incrementVotes(candidateId, votesToAdd);
+    window.openKkiapayWidget({
+      amount: totalPrice.value,
+      position: "right",
+      // label = notre transactionRef → apparaît dans stateData du webhook
+      label: transactionRef,
+      data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
+      key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34",
+      sandbox: false
+    });
+  };
+  // Dans handleKkiapaySuccess()
+  const handleKkiapaySuccess = async (response) => {
+    const kkiapayTransactionId = response?.transactionId;
+    const transactionRef = localStorage.getItem('current_payment_ref');
 
-    // 2. Mettre à jour le pending → done
-    await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
-
-    // 3. Update UI
+    // Anti-double traitement
+      const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
+     if (alreadyDone) {
+    // Webhook a déjà traité — juste update l'UI
+    const votesToAdd = parseInt(voteAmount.value);
     if (candidate.value) candidate.value.votes_count += votesToAdd;
     localStorage.removeItem('current_payment_ref');
     showVoteModal.value = false;
     voteAmount.value = 1;
-    showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
-
-  } catch (error) {
-    // Le transactionId est sauvé en DB → tu peux récupérer manuellement
-    await ticketService.failPendingPayment(transactionRef);
-    console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
-    showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
+    showNotify(` Vos ${votesToAdd} votes ont été ajoutés !`);
+    return;
   }
-};
+
+  const candidateId = candidate.value?.id;
+  const votesToAdd = parseInt(voteAmount.value);
+
+  // ENSUITE le guard
+  if (!candidateId || isNaN(votesToAdd) || votesToAdd < 1) {
+    console.error('VOTE_FAIL - refs perdues', { candidateId, votesToAdd });
+    showNotify("Erreur technique. Contactez le support.", "error");
+    return;
+  }  
+
+  try {
+      // 1. Incrémenter les votes
+      await candidateService.incrementVotes(candidateId, votesToAdd);
+
+      // 2. Mettre à jour le pending → done
+      await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
+
+      // 3. Update UI
+      if (candidate.value) candidate.value.votes_count += votesToAdd;
+      localStorage.removeItem('current_payment_ref');
+      showVoteModal.value = false;
+      voteAmount.value = 1;
+      showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
+
+    } catch (error) {
+  // Vérifier si le webhook a déjà sauvé entre temps
+  const savedByWebhook = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
+  if (savedByWebhook) {
+    // Webhook a sauvé — juste update UI
+    if (candidate.value) candidate.value.votes_count += votesToAdd;
+    localStorage.removeItem('current_payment_ref');
+    showVoteModal.value = false;
+    voteAmount.value = 1;
+    showNotify(` Vos ${votesToAdd} votes ont été ajoutés !`);
+    return;
+  }
+  // Vraie erreur — ni webhook ni frontend n'a réussi
+  await ticketService.failPendingPayment(transactionRef);
+  console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
+  showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
+}
+  };
 
 // const initiatePayment = () => {
 //   if (!candidate.value) return;
