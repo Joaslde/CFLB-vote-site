@@ -175,10 +175,8 @@ onUnmounted(() => {
 const initiatePayment = async () => {
   if (!candidate.value) return;
 
-  // Générer un ref temporaire unique
   const transactionRef = `tmp_${candidate.value.id}_${Date.now()}`;
 
-  // Sauvegarder le pending AVANT d'ouvrir le widget
   await ticketService.createPendingPayment({
     transactionRef,
     candidateId: candidate.value.id,
@@ -186,18 +184,18 @@ const initiatePayment = async () => {
     amount: totalPrice.value
   });
 
-  // Stocker le ref en localStorage pour le retrouver dans le callback
   localStorage.setItem('current_payment_ref', transactionRef);
 
   window.openKkiapayWidget({
     amount: totalPrice.value,
     position: "right",
+    // label = notre transactionRef → apparaît dans stateData du webhook
+    label: transactionRef,
     data: { candidateId: candidate.value.id, voteCount: voteAmount.value },
     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34",
     sandbox: false
   });
 };
-
 // Dans handleKkiapaySuccess()
 const handleKkiapaySuccess = async (response) => {
   const kkiapayTransactionId = response?.transactionId;
