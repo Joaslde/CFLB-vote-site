@@ -259,17 +259,29 @@
         </div>
 
         <div class="row align-items-center flex-row-reverse mt-5">
-          <div class="col-lg-5 mb-4 mb-lg-0 text-center">
-            <div class="vip-img-wrapper">
-              <img src="../assets/parrain.jpeg" alt="Parrain de l'événement" class="img-fluid vip-img">
-            </div>
-          </div>
-          <div class="col-lg-7 pe-lg-5 text-lg-end text-center">
-            <h3 class="role-title text-gold">Parrain Officiel</h3>
-            <h4 class="person-name">Notre Parrain</h4> 
-            <div class="separator-gold ms-auto me-auto me-lg-0"></div>
-          </div>
-        </div>
+  
+  <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+    <div class="vip-img-wrapper">
+      <img src="../assets/parrain.jpeg" alt="Rachad YARI KASSIM - Parrain" class="img-fluid vip-img">
+    </div>
+  </div>
+  
+  <div class="col-lg-7 pe-lg-5 text-lg-end text-center">
+    <h3 class="role-title text-gold">Parrain Officiel</h3>
+    <h4 class="person-name">Rachad YARI KASSIM</h4> 
+    
+    <div class="separator-gold ms-auto me-auto me-lg-0"></div>
+    
+    <p class="person-desc">
+      La Conférence des Femmes Leaders du Bénin a l’honneur d'accueillir <strong>RACHAD YARI KASSIM</strong>, figure inspirante de la créativité et de l’audace entrepreneuriale. Fondateur de <em>Yaris Look</em> et CEO de <em>Yaris Studio</em>, il incarne cette génération de bâtisseurs qui transforment leur passion en véritable mission, élevant ainsi les standards de l'excellence africaine.
+    </p>
+
+    <p class="person-desc">
+      Véritable modèle de leadership et d'innovation, son parcours témoigne d'un esprit visionnaire. Son engagement à nos côtés prouve que l'union des talents permet de bâtir un avenir audacieux, faisant de lui un partenaire de choix pour accompagner les femmes leaders dans leur quête d'autonomisation et de rayonnement.
+    </p>
+  </div>
+  
+</div>
 
       </div>
     </section>
