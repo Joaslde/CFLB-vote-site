@@ -69,7 +69,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import QRCode from 'qrcode';
-import logoUrl from '../assets/CFLB-logo-bgless.png'; // Ton logo
+import logoUrl from '../assets/CFLB-logo-bgless.png';
 
 const route = useRoute();
 const ticketCanvas = ref(null);

@@ -16,7 +16,7 @@
         <p class="copyright">© 2026 CFLB. Tous droits réservés. Leadership • Innovation • Excellence</p>
         
         <p class="dev-signature mt-3">
-          Design & Code par <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
+          Design & Code par <br> <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
         </p>
       </div>
       
@@ -44,7 +44,7 @@
 }
 .dev-signature {
   font-family: 'Montserrat', sans-serif;
-  font-size: .8rem;
+  font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.3); /* Très discret de base */
   letter-spacing: 1px;
   transition: all 0.3s ease;

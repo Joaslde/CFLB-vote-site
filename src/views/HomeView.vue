@@ -148,7 +148,7 @@
         <p class="copyright">© 2026 CFLB. Tous droits réservés. Leadership • Innovation • Excellence</p>
         
         <p class="dev-signature mt-3">
-          Design & Code par <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
+          Design & Code par <br> <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
         </p>
       </div>
 
@@ -923,7 +923,7 @@ onMounted(() => {
 /* --- AJOUTS CSS POUR LA SIGNATURE --- */
 .dev-signature {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.7rem;
+  font-size: .9rem;
   color: rgba(255, 255, 255, 0.3); /* Très discret de base */
   letter-spacing: 1px;
   transition: all 0.3s ease;
@@ -931,6 +931,7 @@ onMounted(() => {
 
 .dev-signature a {
   color: rgba(255, 255, 255, 0.5);
+  font-size: 1.2rem;
 
   font-weight: 600;
   transition: color 0.3s ease;

@@ -150,7 +150,7 @@ const handleKkiapaySuccess = async (response) => {
     // Marquer comme failed pour retrouver manuellement
     if (transactionRef) await ticketService.failPendingPayment(transactionRef);
     console.error("TICKET_FAIL", { kkiapayTransactionId, ticketCode, buyerName });
-    alert("Paiement reçu mais erreur technique possible. Contactez le support (+229 01 59 84 11 85) avec votre reçu pour confirmer que votre achat a été validé.");
+    alert("Paiement reçu mais erreur technique possible. Contactez le support whatsapp (+229 01 59 84 11 85) avec votre reçu pour confirmer que votre achat a été validé.");
   } finally {
     loading.value = false;
   }

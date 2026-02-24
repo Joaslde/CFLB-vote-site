@@ -36,9 +36,14 @@
           <button class="btn-vote" @click="showVoteModal = true">
             VOTER MAINTENANT
           </button>
+          <p class="dev-signature">
+          Designed by <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
+        </p>
         </div>
       </div>
 
+
+      
       <Transition name="fade">
         <div v-if="showVoteModal" class="modal-overlay" @click.self="showVoteModal = false">
           <div class="vote-modal">
@@ -840,4 +845,27 @@ useHead({
     font-size: 1.2rem;
   }
 }
+.dev-signature {
+  font-family: 'Montserrat', sans-serif;
+  font-size: .6rem;
+  color: rgba(255, 255, 255, 0.3); /* Très discret de base */
+  letter-spacing: 1px;
+  margin-top:15px;
+  margin-left:3.2rem;
+  
+}
+
+.dev-signature a {
+  color: rgba(255, 255, 255, 0.5);
+  
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dev-signature a:hover {
+  color: #D4AF37; /* S'illumine en or au survol */
+  text-decoration: underline;
+}
+
+
 </style>
