@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// On importera les composants plus tard
 import HomeView from '../views/HomeView.vue'
 
 const routes = [

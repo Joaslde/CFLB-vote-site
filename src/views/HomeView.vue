@@ -161,8 +161,6 @@
     Cette 2ᵉ édition se tiendra à l’Université d’Abomey-Calavi le 21 mars 2026.
   </p>
 </section>
-
-
     </footer>
 
   </div>
@@ -238,7 +236,6 @@ useHead({
   ]
 })
 
-
 useHead({
   script: [
     {
@@ -273,13 +270,6 @@ useHead({
   ]
 })
 
-
-
-
-
-
-
-
 const router = useRouter();
 const topCandidates = ref([]);
 
@@ -287,7 +277,7 @@ const topCandidates = ref([]);
 onMounted(async () => {
   try {
     const allCandidates = await candidateService.getAllCandidates();
-    // Tri par votes (décroissant) et on garde les 3 premiers
+    // Tri par votes (décroissant) 
     topCandidates.value = allCandidates
       .sort((a, b) => (b.votes_count || 0) - (a.votes_count || 0))
       .slice(0, 3);

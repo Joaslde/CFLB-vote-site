@@ -203,64 +203,22 @@ useHead({
   };
   // Dans handleKkiapaySuccess()
   const handleKkiapaySuccess = async (response) => {
-    const kkiapayTransactionId = response?.transactionId;
-    const transactionRef = localStorage.getItem('current_payment_ref');
-
-    // Anti-double traitement
-      const alreadyDone = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
-     if (alreadyDone) {
-    // Webhook a déjà traité — juste update l'UI
-    const votesToAdd = parseInt(voteAmount.value);
-    if (candidate.value) candidate.value.votes_count += votesToAdd;
-    localStorage.removeItem('current_payment_ref');
-    showVoteModal.value = false;
-    voteAmount.value = 1;
-    showNotify(` Vos ${votesToAdd} votes ont été ajoutés !`);
-    return;
-  }
-
-  const candidateId = candidate.value?.id;
   const votesToAdd = parseInt(voteAmount.value);
 
-  // ENSUITE le guard
-  if (!candidateId || isNaN(votesToAdd) || votesToAdd < 1) {
-    console.error('VOTE_FAIL - refs perdues', { candidateId, votesToAdd });
-    showNotify("Erreur technique. Contactez le support.", "error");
-    return;
-  }  
+  // UI seulement — le webhook gère la DB
+  localStorage.removeItem('current_payment_ref');
+  showVoteModal.value = false;
+  voteAmount.value = 1;
+  showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
+  
+  // Recharger depuis DB après 2 secondes (laisse le temps au webhook)
+  setTimeout(async () => {
+    await loadCandidate();
+  }, 2000);
+};
 
-  try {
-      // 1. Incrémenter les votes
-      await candidateService.incrementVotes(candidateId, votesToAdd);
 
-      // 2. Mettre à jour le pending → done
-      await ticketService.resolvePendingPayment(transactionRef, kkiapayTransactionId);
 
-      // 3. Update UI
-      if (candidate.value) candidate.value.votes_count += votesToAdd;
-      localStorage.removeItem('current_payment_ref');
-      showVoteModal.value = false;
-      voteAmount.value = 1;
-      showNotify(`Vos ${votesToAdd} votes ont été ajoutés !`);
-
-    } catch (error) {
-  // Vérifier si le webhook a déjà sauvé entre temps
-  const savedByWebhook = await ticketService.isTransactionAlreadyDone(kkiapayTransactionId);
-  if (savedByWebhook) {
-    // Webhook a sauvé — juste update UI
-    if (candidate.value) candidate.value.votes_count += votesToAdd;
-    localStorage.removeItem('current_payment_ref');
-    showVoteModal.value = false;
-    voteAmount.value = 1;
-    showNotify(` Vos ${votesToAdd} votes ont été ajoutés !`);
-    return;
-  }
-  // Vraie erreur — ni webhook ni frontend n'a réussi
-  await ticketService.failPendingPayment(transactionRef);
-  console.error('VOTE_FAIL', { kkiapayTransactionId, candidateId, votesToAdd });
-  showNotify("Paiement reçu mais erreur technique. Contactez le support.", "error");
-}
-  };
 
 // const initiatePayment = () => {
 //   if (!candidate.value) return;
