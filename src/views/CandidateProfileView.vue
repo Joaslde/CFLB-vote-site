@@ -33,9 +33,20 @@
             </div>
           </div>
 
-          <button class="btn-vote" @click="showVoteModal = true">
+          <!-- <button class="btn-vote" @click="showVoteModal = true">
             VOTER MAINTENANT
-          </button>
+          </button> -->
+          
+          <button class="btn-vote" disabled style="
+  background: linear-gradient(135deg, #b8960c, #a07800);
+  opacity: 0.7;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+">
+  FIN DES VOTES
+</button>
+
+
           <p class="dev-signature">
           Designed by <a href="https://joas-lde.netlify.app" target="_blank" rel="noopener noreferrer">Joas L.</a>
         </p>
