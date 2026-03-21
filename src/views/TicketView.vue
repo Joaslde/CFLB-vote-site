@@ -12,9 +12,10 @@
         </div>
 
         <div class="card-body">
-          <p  style="color:red; font-size: 30px; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ; " >Promotion exceptionnel (Ticket a 2000 f) <br> pendant une heure 5h à 6h</p>
+        <p style="color:red; font-size: 30px; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;"  >Fin de la promo</p>
+          <!-- <p  style="color:red; font-size: 30px; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ; " >Promotion exceptionnel (Ticket a 2000 f) <br> pendant une heure 5h à 6h</p> -->
           <div class="price-tag">
-            <span class="amount">2.000</span>
+            <span class="amount">3.000</span>
             <span class="currency">FCFA</span>
           </div>
 
@@ -77,7 +78,7 @@ const initiatePayment = async () => {
       transactionRef,
       nomComplet: form.nom,
       ticketCode,
-      amount: 2000
+      amount: 3000
     });
   } catch (e) {
     console.error("Erreur création pending:", e);
@@ -90,7 +91,7 @@ const initiatePayment = async () => {
   localStorage.setItem('current_buyer_name', form.nom);
 
   window.openKkiapayWidget({
-    amount: 2000,
+    amount: 3000,
     position: "center",
     data: { buyerName: form.nom, ticketCode },
     key: "942cbc25f83c21b1f0ac7161490d56b2ea1f6b34", // clé réelle
