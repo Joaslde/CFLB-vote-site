@@ -12,7 +12,6 @@
         </div>
 
         <div class="card-body">
-        <p style="color:red; font-size: 30px; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;"  >Fin de la promo</p>
           <!-- <p  style="color:red; font-size: 30px; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ; " >Promotion exceptionnel (Ticket a 2000 f) <br> pendant une heure 5h à 6h</p> -->
           <div class="price-tag">
             <span class="amount">3.000</span>
